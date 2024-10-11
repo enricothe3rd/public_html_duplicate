@@ -1,0 +1,26 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.customRed{
+    background-color:#B80000;
+}
+.customRedHover:hover{
+    background-color:#950000;
+}
+
+.textWhite{
+    color:#fafafa;
+}
+
+.textBlack{
+    color:#252525;
+}
+
+/* 'custom-red': '#B80000',
+'custom-RedHover': '#950000',
+'custom-darkRed': '#820300',
+'custom-yellow': '#FF9800',
+'custom-white': '#fafafa',
+'custom-black': '#252525',
+'custom-white': '#fafafa', */
