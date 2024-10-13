@@ -37,71 +37,92 @@ $pdo = Database::connect();
             height: 100%;
             border: none;
         }
-        .additional-buttons {
-            display: none; /* Hide additional buttons by default */
+        .tab-active {
+            background-color: #f87171; /* Active tab background color */
+            color: white; /* Active tab text color */
         }
-        .arrow-icon {
-            transition: transform 0.3s ease;
+        aside{
+            width:15vw;
         }
-        .arrow-icon.expanded {
-            transform: rotate(90deg); /* Rotate icon when expanded */
+        #toggle-sidebar{
+            display: none;
         }
-        nav a:hover {
-            background-color: #f87171;
-            color: #fff;
+        /* Hide sidebar by default on mobile */
+        @media (max-width: 768px) {
+            aside{
+                width: 12vw;
+                padding-top:5%;
+            }
+            aside, .logo {
+                display: none; /* Hide sidebar */
+            }
+            .sidebar-visible {
+                display: block; /* Show sidebar when toggled */
+            }
+            /* Hide text on small devices */
+            aside span {
+                display: none; /* Hide text */
+            }
+            /* Show icons on small devices */
+            aside a{
+                padding:0;
+            }
+            aside i {
+                display: block; /* Ensure icons are displayed */
+            }
+            nav ul li a {
+    margin: 0; /* Removes any margin */
+    padding: 0; /* Removes any padding */
+
+}
+#toggle-sidebar{
+            display: block;
         }
-        nav a {
-            transition: all 0.3s ease;
-        }
-        .custom-logo-size {
-            height: 9rem;
-            width: 8.6rem;
-            margin: auto;
+
         }
     </style>
+
 </head>
 <body class="bg-gray-100">
 
     <div class="flex h-screen">
         <!-- Sidebar -->
-        <aside class="w-64 bg-red-800 text-white flex-shrink-0">
+        <aside id="sidebar" class=" bg-red-800 h-[120vh] text-white flex-shrink-0">
             <!-- Logo -->
-            <div class="p-6 text-center">
+            <div class="p-6 text-center logo">
                 <img src="assets/images/school-logo/bcc-icon1.jpg" alt="Logo" class="custom-logo-size rounded-full">
             </div>
-
             <!-- Navigation -->
             <nav class="mt-4">
-                <ul>
-                    <li><a href="#" class="flex items-center py-3 px-4 hover:bg-red-500" onclick="showContent('home')"><i class="fas fa-home mr-3"></i> Home</a></li>
-                    <li><a href="#" class="flex items-center py-3 px-4 hover:bg-red-500" onclick="showContent('profile')"><i class="fas fa-home mr-3"></i> My Profile</a></li>
+            <ul class="flex flex-col space-y-2"><li><a href="#" class="flex items-center py-3 px-4 hover:bg-red-500" onclick="showContent('home')"><i class="fas fa-house-user mr-3"></i> <span class="hidden md:inline">Home</span></a></li>
+<li><a href="#" class="flex items-center py-3 px-4 hover:bg-red-500" onclick="showContent('profile')"><i class="fas fa-user mr-3"></i> <span class="hidden md:inline">My Profile</span></a></li>
+<li><a href="#" class="flex items-center py-3 px-4 hover:bg-red-500" onclick="showContent('department')"><i class="fas fa-book-open mr-3"></i> <span class="hidden md:inline">Enrolled Subjects</span></a></li>
+<li><a href="#" class="flex items-center py-3 px-4 hover:bg-red-500" onclick="showContent('courses')"><i class="fas fa-users mr-3"></i> <span class="hidden md:inline">Student by Subjects</span></a></li>
 
-  
-
-
-                    <li><a href="#" class="flex items-center py-3 px-4 hover:bg-red-500" onclick="showContent('department')"><i class="fas fa-building mr-3"></i> Enrolled Subjects</a></li>
-                    <li><a href="#" class="flex items-center py-3 px-4 hover:bg-red-500" onclick="showContent('courses')"><i class="fas fa-graduation-cap mr-3"></i> Student By Subjects <i class="fas fa-chevron-right arrow-icon ml-auto"></i></a></li>
                 </ul>
             </nav>
         </aside>
 
         <!-- Main Content -->
         <main class="flex-1 p-6 overflow-hidden">
+        <button id="toggle-sidebar" class="bg-red-800 text-white p-2 rounded mb-4" onclick="toggleSidebar()">
+                <i class="fas fa-bars"></i> <!-- Toggle Icon -->
+            </button>
             <div id="home" class="content-section">
                 <iframe src="home.php" title="Home"></iframe>
             </div>
 
             <div id="profile" class="content-section">
-                <iframe src="profile/student_profile.php" title="My Profile"></iframe>
+                <iframe src="student/profile/student_profile.php" title="My Profile"></iframe>
             </div>
 
             <div id="department" class="content-section">
-                <iframe src="Enrolled_subject/grades.php" title="Research Fees"></iframe>
+                <iframe src="student/Enrolled_subject/grades.php" title="Research Fees"></iframe>
             </div>
 
 
             <div id="courses" class="content-section">
-                <iframe src="instructor/student_by_subject.php" title="Courses"></iframe>
+                <iframe src="registrar/instructor/student_by_subject.php" title="Courses"></iframe>
             </div>
 
 
@@ -118,25 +139,42 @@ $pdo = Database::connect();
         // Show the selected content section
         document.getElementById(id).style.display = 'block';
 
+            // Remove active class from all tabs
+            document.querySelectorAll('nav a').forEach(tab => {
+            tab.classList.remove('tab-active');
+        });
+
+        // Add active class to the clicked tab
+        element.classList.add('tab-active');
+
+        // Show sidebar on mobile
+        if (window.innerWidth <= 768) {
+            document.getElementById('sidebar').classList.add('sidebar-visible');
+        }
+
         // Store the currently selected section in localStorage
         localStorage.setItem('selectedSection', id);
     }
 
-    // Check if there is a saved section in localStorage
-    const savedSection = localStorage.getItem('selectedSection');
-    if (savedSection) {
-        showContent(savedSection);
-    } else {
-        // Default to showing home if no section is saved
-        showContent('home');
+        // Function to toggle sidebar visibility
+        function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        sidebar.classList.toggle('sidebar-visible');
     }
 
 
+          // Check if there is a saved section in localStorage
+          const savedSection = localStorage.getItem('selectedSection');
+        if (savedSection) {
+            showContent(savedSection, document.querySelector(`nav a[href='#'][onclick*="${savedSection}"]`));
+        } else {
+            // Default to showing home if no section is saved
+            showContent('home', document.querySelector(`nav a[href='#'][onclick*="home"]`));
+        }
 
 
-    function goBack() {
-        window.history.back(); // Navigates to the previous page
-    }
+
+
     </script>
 </body>
 </html>

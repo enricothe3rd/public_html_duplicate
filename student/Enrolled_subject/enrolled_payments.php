@@ -57,7 +57,7 @@ if (isset($_SESSION['student_number'])) {
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 <body class="bg-gray-100 p-6">
-    <h1 class="text-2xl font-bold mb-4 text-center uppercase text-red-800">Payment Records</h1>
+    <h1 class="text-2xl font-bold mb-4 text-center  text-red-800">Payment Records</h1>
 
     <?php if (!empty($payments)): ?>
         <div class="overflow-x-auto">
@@ -105,42 +105,42 @@ if (isset($_SESSION['student_number'])) {
                     <div class="bg-white shadow-md rounded-lg mb-4 p-4">
                         <div class="flex flex-col">
                             <div class="flex justify-between">
-                                <span class="font-bold uppercase text-red-800">Student Number:</span>
+                                <span class="font-bold  text-red-800">Student Number:</span>
                                 <span><?php echo htmlspecialchars($payment['student_number']); ?></span>
                             </div>
-                            <div class="flex justify-between uppercase ">
+                            <div class="flex justify-between  ">
                                 <span class="font-bold text-red-800">Number of Units:</span>
                                 <span><?php echo htmlspecialchars($payment['number_of_units']); ?></span>
                             </div>
-                            <div class="flex justify-between uppercase ">
+                            <div class="flex justify-between  ">
                                 <span class="font-bold text-red-800">Amount per Unit:</span>
                                 <span><?php echo htmlspecialchars($payment['amount_per_unit']); ?></span>
                             </div>
-                            <div class="flex justify-between uppercase ">
+                            <div class="flex justify-between  ">
                                 <span class="font-bold text-red-800">Miscellaneous Fee:</span>
                                 <span><?php echo htmlspecialchars($payment['miscellaneous_fee']); ?></span>
                             </div>
                             <?php if (trim($payment_method) === 'installment'): ?>
-                                <div class="flex justify-between uppercase ">
+                                <div class="flex justify-between  ">
                                     <span class="font-bold text-red-800">Installment Payment:</span>
                                     <span><?php echo htmlspecialchars($payment['installment_down_payment']); ?></span>
                                 </div>
                             <?php endif; ?>
                             <?php if (trim($payment_method) === 'cash'): ?>
-                                <div class="flex justify-between uppercase ">
+                                <div class="flex justify-between  ">
                                     <span class="font-bold text-red-800">Total Payment:</span>
                                     <span><?php echo htmlspecialchars($payment['total_payment']); ?></span>
                                 </div>
                             <?php endif; ?>
-                            <div class="flex justify-between uppercase ">
+                            <div class="flex justify-between  ">
                                 <span class="font-bold text-red-800">Payment Method:</span>
                                 <span><?php echo htmlspecialchars($payment['payment_method']); ?></span>
                             </div>
-                            <div class="flex justify-between uppercase ">
+                            <div class="flex justify-between  ">
                                 <span class="font-bold text-red-800">Transaction ID:</span>
                                 <span><?php echo htmlspecialchars($payment['transaction_id']); ?></span>
                             </div>
-                            <div class="flex justify-between uppercase ">
+                            <div class="flex justify-between  ">
                                 <span class="font-bold text-red-800 ">Created At:</span>
                                 <span><?php echo htmlspecialchars($payment['created_at']); ?></span>
                             </div>

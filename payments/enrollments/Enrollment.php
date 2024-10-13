@@ -85,7 +85,7 @@ class Enrollment {
 
     public function createEnrollment($data) {
         $sql = "
-            INSERT INTO enrollments (student_number, lastname, firstname, middlename, email, dob, address, contact_no, sex, suffix, status)
+            INSERT INTO enrollments (student_number, lastname, firstname, middlename, email, dob, address, contact_no, sex, suffix, status, year)
             VALUES (:student_number, :lastname, :firstname, :middlename, :email, :dob, :address, :contact_no, :sex, :suffix, :status, :year)";
 
         $stmt = $this->db->prepare($sql);

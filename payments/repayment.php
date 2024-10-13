@@ -162,22 +162,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body class="">
     <form id="payment-form" method="post" action="">
         <input type="hidden" id="hidden_total" name="total_amount1" value="0.00">
-        <div class="bg-red-50 p-6 rounded-lg shadow-md max-w-lg mx-auto">
-            <!-- Payment Details -->
-            <div class="mb-6">
-                <p class="text-lg font-semibold text-gray-800">
-                    Number of Installment: <span class="font-bold text-blue-600" id="installment-count"></span>
-                </p>
-                <p class="text-lg font-semibold text-gray-800 mt-2">
-                    Total Tuition: <span class="font-bold text-green-600">₱<span id="total-amount"><?php echo htmlspecialchars($total_installment); ?></span></span>
-                </p>
-                <p class="text-lg font-semibold text-gray-800 mt-2">
-                    Amount Already Payed: <span class="font-bold text-green-600">₱<span id="total_already_payed"><?php echo htmlspecialchars($total_already_payed); ?></span></span>
-                </p>
-                <p class="text-lg font-semibold text-gray-800 mt-2">
-                    Remaining Balance: <span class="font-bold text-red-600">₱<span id="remaining-balance"><?php echo htmlspecialchars($remaining_balance); ?></span></span>
-                </p>
-            </div>
+        <div class=" p-6 rounded-lg shadow-md max-w-lg mx-auto">
+            <!-- Payment Details --><br><br><br>
+            <div class="bg-white p-6 rounded-lg shadow-lg mb-6 max-w-md mx-auto">
+    <p class="text-lg font-semibold text-gray-700">
+        Number of Installments: 
+        <span class="font-bold text-blue-600" id="installment-count"></span>
+    </p>
+    
+    <p class="text-lg font-semibold text-gray-700 mt-4">
+        Total Tuition: 
+        <span class="font-bold text-green-500">₱<span id="total-amount"><?php echo htmlspecialchars($total_installment); ?></span></span>
+    </p>
+
+    <p class="text-lg font-semibold text-gray-700 mt-4">
+        Amount Already Paid: 
+        <span class="font-bold text-green-500">₱<span id="total_already_payed"><?php echo htmlspecialchars($total_already_payed); ?></span></span>
+    </p>
+
+    <p class="text-lg font-semibold text-gray-700 mt-4">
+        Remaining Balance: 
+        <span class="font-bold text-red-500">₱<span id="remaining-balance"><?php echo htmlspecialchars($remaining_balance); ?></span></span>
+    </p>
+</div>
 
             <?php
 // Check if remaining balance and number of months are set
@@ -193,14 +200,17 @@ if (isset($remaining_balance) && isset($number_of_months) && $number_of_months >
         for ($i = 1; $i <= $number_of_months; $i++) {
             if ($i <= $max_months) {
 ?>
-                <div class="flex items-center mb-4 p-3 bg-gray-50 border rounded-lg shadow-sm hover:bg-gray-100 transition duration-200 ease-in-out">
-                    <input type="checkbox" name="month_payment[]" value="<?= $monthly_payment ?>" 
-                           class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                           id="month-<?= $i ?>" onchange="updateTotal(this); toggleCustomAmount()">
-                    <label class="ml-3 text-gray-700" for="month-<?= $i ?>">Month <?= $i ?> - Payment: 
-                        <span class="font-semibold text-green-600">₱<?= number_format($monthly_payment, 2) ?></span>
-                    </label>
-                </div>
+         <div class="flex items-center mb-4 p-4 bg-white border border-gray-200 rounded-lg shadow-md hover:bg-gray-50 transition duration-200 ease-in-out">
+    <input type="checkbox" name="month_payment[]" value="<?= $monthly_payment ?>" 
+           class="h-5 w-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+           id="month-<?= $i ?>" onchange="updateTotal(this); toggleCustomAmount()">
+    
+    <label class="ml-4 text-gray-800 text-base" for="month-<?= $i ?>">
+        Month <?= $i ?> - Payment: 
+        <span class="font-semibold text-green-600">₱<?= number_format($monthly_payment, 2) ?></span>
+    </label>
+</div>
+
 <?php
             }
         }
@@ -216,20 +226,19 @@ if (isset($remaining_balance) && isset($number_of_months) && $number_of_months >
 
 
 <!-- Custom Amount Input -->
-<div class="mb-4 <?php echo ($remaining_balance <= 0) ? 'hidden' : ''; ?>">
-    <label for="custom_amount">Custom Amount:</label>
-    <input type="number" id="custom_amount" name="custom_amount" placeholder="Enter custom amount" min="0" oninput="updateCustomAmount(this)">
-    <p class="text-lg font-semibold text-gray-800 mt-2">
-        Amount Selected: <span class="font-bold text-green-600">₱<span id="total-amount1">0.00</span></span>
+<div class="mb-6 <?php echo ($remaining_balance <= 0) ? 'hidden' : ''; ?>">
+    <label for="custom_amount" class="block text-gray-700 text-sm font-medium mb-2">
+        Custom Amount:
+    </label>
+    <input type="number" id="custom_amount" name="custom_amount" placeholder="Enter custom amount" min="0" 
+           class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
+           oninput="updateCustomAmount(this)">
+    
+    <p class="text-lg font-semibold text-gray-800 mt-4">
+        Amount Selected: 
+        <span class="font-bold text-green-600">₱<span id="total-amount1">0.00</span></span>
     </p>
 </div>
-
-
-
-
-
-
-
 
 
 

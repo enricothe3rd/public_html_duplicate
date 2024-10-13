@@ -4,6 +4,7 @@ require '../../db/db_connection3.php';
 require '../../message.php';
 
 $pdo = Database::connect();
+require '../../session_student.php';
 
 // Check if the session variables are set
 if (isset($_SESSION['student_number']) && isset($_SESSION['user_email'])) {
@@ -133,7 +134,7 @@ function formatTime($time) {
 
             <div class="block sm:hidden"> <!-- Visible only on small devices -->
                 <?php foreach ($subjects as $subject): ?>
-                    <div class="bg-white shadow-md rounded-lg mb-4 p-4">
+                    <div class="bg-white shadow-md rounded-lg mb-4 p-2">
                         <div class="flex flex-col">
                             <div class="flex justify-between">
                                 <span class="font-bold">Section Name:</span>

@@ -65,6 +65,11 @@
         }
 
         }
+
+        .custom-logo-size{
+            height:50%;
+            width: 50%;
+        }
     </style>
 </head>
 <body class="bg-gray-100 ">
@@ -73,12 +78,12 @@
         <aside id="sidebar" class=" bg-red-800 h-[120vh] text-white flex-shrink-0">
             <!-- Logo -->
             <div class="p-6 text-center logo">
-            <img src="assets/images/school-logo/bcc-icon1.jpg" alt="Logo" class="custom-logo-size rounded-full">
+            <img src="assets/images/school-logo/bcc-icon1.jpg" alt="Logo" class="custom-logo-size mx-auto rounded-full">
 
             </div>
 
             <!-- Navigation -->
-            <nav class="mt-4">
+            <nav class="mt-4 sm:mt-1">
                 <ul>
                     <li><a href="#" class="flex items-center py-3 px-4 hover:bg-red-500" onclick="showContent('home')"><i class="fas fa-home mr-3"></i> <span class="hidden md:inline">Home</span></a></li>
                     <li><a href="#" class="flex items-center py-3 px-4 hover:bg-red-500" onclick="showContent('profile')"><i class="fas fa-home mr-3"></i> <span class="hidden md:inline">Profile</span></a></li>
@@ -109,7 +114,7 @@
                 <i class="fas fa-bars"></i> <!-- Toggle Icon -->
             </button>
             <div id="home" class="content-section">
-            <iframe src="profile/display_all_student.php" title="All Student"></iframe> 
+            <iframe src="student/profile/display_all_student.php" title="All Student"></iframe> 
             </div>
 
             <div id="profile" class="content-section">

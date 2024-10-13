@@ -77,17 +77,19 @@ if ($existingEnrollment) {
         ?>
     </div>
 <?php endif; ?>
-        <form action="send_enrollment.php" method="POST" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            
+
+<form action="send_enrollment.php" method="POST" class="grid grid-cols-1 gap-4 sm:grid-cols-1 md:grid-cols-2">
+       
+
             <!-- Student Number -->
-            <div class="mb-4 col-span-2 relative">
+            <div class="mb-4 col-span-1 sm:col-span-2 md:col-span-2 relative">
                 <label for="student_number" class="block text-sm font-medium text-red-700">Student Number</label>
                 <input type="text" name="student_number" id="student_number" value="<?= htmlspecialchars($latest_student_number ?: $enrollment->generateStudentNumber()) ?>" readonly class="mt-1 block w-full h-12 pl-10 border border-red-500 text-red-700 rounded shadow-sm bg-gray-100 focus:border-red-500 focus:ring-2 focus:ring-red-500">
                 <i class="fas fa-id-card absolute top-10 left-3 text-red-500"></i>
             </div>
-
+      
             <!-- Last Name -->
-            <div class="mb-4 relative">
+                       <div class="mb-4 col-span-1 relative">
                 <label for="lastname" class="block text-sm font-medium text-red-700">Last Name</label>
                 <div class="flex items-center border border-red-300 rounded-md shadow-sm">
                     <label for="lastname" class="px-3 text-red-700 font-medium"><i class="fas fa-user"></i></label>
@@ -96,7 +98,7 @@ if ($existingEnrollment) {
             </div>
 
             <!-- First Name -->
-            <div class="mb-4 relative">
+                       <div class="mb-4 col-span-1 relative">
                 <label for="firstname" class="block text-sm font-medium text-red-700">First Name</label>
                 <div class="flex items-center border border-red-300 rounded-md shadow-sm">
                     <label for="firstname" class="px-3 text-red-700 font-medium"><i class="fas fa-user"></i></label>
@@ -105,7 +107,7 @@ if ($existingEnrollment) {
             </div>
 
             <!-- Middle Name -->
-            <div class="mb-4 relative">
+                       <div class="mb-4 col-span-1 relative">
                 <label for="middlename" class="block text-sm font-medium text-red-700">Middle Name</label>
                 <div class="flex items-center border border-red-300 rounded-md shadow-sm">
                     <label for="middlename" class="px-3 text-red-700 font-medium"><i class="fas fa-user"></i></label>
@@ -114,7 +116,7 @@ if ($existingEnrollment) {
             </div>
 
             <!-- Suffix -->
-            <div class="mb-4 relative">
+                       <div class="mb-4 col-span-1 relative">
                 <label for="suffix" class="block text-sm font-medium text-red-700">Suffix (Optional)</label>
                 <div class="flex items-center border border-red-300 rounded-md shadow-sm">
                     <label for="suffix" class="px-3 text-red-700 font-medium"><i class="fas fa-user-tag"></i></label>
@@ -123,7 +125,7 @@ if ($existingEnrollment) {
             </div>
 
             <!-- Email -->
-            <div class="mb-4 relative">
+                       <div class="mb-4 col-span-1 relative">
                 <label for="email" class="block text-sm font-medium text-red-700">Email Address</label>
                 <div class="flex items-center border border-red-300 rounded-md shadow-sm">
                     <label for="email" class="px-3 text-red-700 font-medium"><i class="fas fa-envelope"></i></label>
@@ -132,7 +134,7 @@ if ($existingEnrollment) {
             </div>
 
             <!-- Date of Birth -->
-            <div class="mb-4 relative">
+                       <div class="mb-4 col-span-1 relative">
                 <label for="dob" class="block text-sm font-medium text-red-700">Date of Birth</label>
                 <div class="flex items-center border border-red-300 rounded-md shadow-sm">
                     <label for="dob" class="px-3 text-red-700 font-medium"><i class="fas fa-calendar-alt"></i></label>
@@ -141,7 +143,7 @@ if ($existingEnrollment) {
             </div>
 
             <!-- Address -->
-            <div class="mb-4 relative">
+                       <div class="mb-4 col-span-1 relative">
                 <label for="address" class="block text-sm font-medium text-red-700">Address</label>
                 <div class="flex items-center border border-red-300 rounded-md shadow-sm">
                     <label for="address" class="px-3 text-red-700 font-medium"><i class="fas fa-map-marker-alt"></i></label>
@@ -150,7 +152,7 @@ if ($existingEnrollment) {
             </div>
 
             <!-- Contact No -->
-            <div class="mb-4 relative">
+                       <div class="mb-4 col-span-1 relative">
                 <label for="contact_no" class="block text-sm font-medium text-red-700">Contact No</label>
                 <div class="flex items-center border border-red-300 rounded-md shadow-sm">
                     <label for="contact_no" class="px-3 text-red-700 font-medium"><i class="fas fa-phone"></i></label>
@@ -159,7 +161,7 @@ if ($existingEnrollment) {
             </div>
 
             <!-- Sex -->
-            <div class="mb-4 relative">
+                       <div class="mb-4 col-span-1 relative">
                 <label for="sex" class="block text-sm font-medium text-red-700">Sex</label>
                 <div class="flex items-center border border-red-300 rounded-md shadow-sm">
                     <label for="sex" class="px-3 text-red-700 font-medium"><i class="fas fa-venus-mars"></i></label>
@@ -173,7 +175,7 @@ if ($existingEnrollment) {
             </div>
 
             <!-- Status -->
-            <div class="mb-4 relative">
+                       <div class="mb-4 col-span-1 relative">
                 <label for="status" class="block text-sm font-medium text-red-700">Status</label>
                 <div class="flex items-center border border-red-300 rounded-md shadow-sm">
                     <label for="status" class="px-3 text-red-700 font-medium"><i class="fas fa-info-circle"></i></label>
@@ -186,7 +188,7 @@ if ($existingEnrollment) {
                 </div>
             </div>
 
-                    <div class="mb-4 relative">
+                               <div class="mb-4 col-span-1 relative">
 
             <label for="year" class="block text-sm font-medium text-red-700">Select Academic Year</label>
             <div class="flex items-center border border-red-300 rounded-md shadow-sm">   
@@ -202,8 +204,8 @@ if ($existingEnrollment) {
 
 
             <!-- Submit Button -->
-            <div class="col-span-2">
-                <button type="submit" class="w-full bg-red-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-red-600 transition duration-200">
+            <div class="col-span-1 sm:col-span-2">
+                <button type="submit" class="w-full bg-red-700 hover:bg-red-600 text-white font-bold py-2 px-4 rounded shadow-lg transition duration-200">
                     Submit Enrollment
                 </button>
             </div>

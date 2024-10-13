@@ -87,7 +87,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['subject_id'])) {
 }
 
 // Include the message handler to display messages
-include '../message/message_handler.php';
+include '../../message/message_handler.php';
 ?>
 
 <!DOCTYPE html>

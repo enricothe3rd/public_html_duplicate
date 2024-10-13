@@ -7,7 +7,7 @@ require_once 'db/db_connection3.php'; // Adjust the path to where your Database 
 
 
 // // Fetch the student_number and email from the session
-// $student_number = $_SESSION['student_number'] ?? null;
+$student_number = $_SESSION['student_number'] ?? null;
 // $email = $_SESSION['user_email'] ?? null;
 // $role = $_SESSION['user_role'];
 
@@ -24,7 +24,6 @@ if ($student_number) {
     $sql = "SELECT payment_method, payment_status FROM payments WHERE student_number = :student_number LIMIT 1";
     $stmt = $pdo->prepare($sql);
     $stmt->bindParam(':student_number', $student_number, PDO::PARAM_STR);
-
     // Execute the query
     $stmt->execute();
 
@@ -169,7 +168,7 @@ if ($student_number) {
                 <i class="fas fa-bars"></i> <!-- Toggle Icon -->
             </button>
             <div id="home" class="content-section">
-            <iframe src="" title="My Subjects"></iframe>
+            <iframe src="front_page.php" title="My Subjects"></iframe>
             </div>
             <div id="profile" class="content-section">
                 <iframe src="student/profile/student_profile.php" title="My Profile"></iframe>
