@@ -1,30 +1,33 @@
-<?php
 
-require 'session_instructor.php';
+<?php 
 
-// Include the Database class file (adjust the path if necessary)
-require_once 'db/db_connection3.php'; // Adjust the path to where your Database class is defined
 
-// Fetch the student_number and email from the session
 
-$email = $_SESSION['user_email'] ?? null; // Adjusted to use session variable directly
+require 'session_admin.php';
 
-// Call the connect method to get PDO instance
-$pdo = Database::connect();
 
 ?>
+
+
+
+
+
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>College Department Dashboard</title>
+    <title>Admin Dashboard</title>
     <!-- Tailwind CSS CDN -->
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <!-- Font Awesome CDN -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="icon" type="image/png" href="assets/images/school-logo/bcc-icon.png">
+     <!-- You can also use PNG -->
+     <!-- <link rel="icon" type="image/x-icon" href="assets/images/school-logo/bcc-icon1.ico"> -->
+     <link rel="icon" type="image/png" href="assets/images/school-logo/bcc-icon.png">
+
+
     <style>
         html, body {
             height: 100%;
@@ -82,20 +85,24 @@ $pdo = Database::connect();
         }
 
         }
+
+        .custom-logo-size{
+            height:50%;
+            width: 50%;
+        }
     </style>
-
 </head>
-<body class="bg-gray-100">
-
+<body class="bg-gray-100 ">
     <div class="flex h-screen">
         <!-- Sidebar -->
         <aside id="sidebar" class=" bg-red-800 h-[120vh] text-white flex-shrink-0">
             <!-- Logo -->
             <div class="p-6 text-center logo">
-                <img src="assets/images/school-logo/bcc-icon1.jpg" alt="Logo" class="custom-logo-size rounded-full">
+            <img src="assets/images/school-logo/bcc-icon1.jpg" alt="Logo" class="custom-logo-size mx-auto rounded-full">
+
             </div>
-            <!-- Navigation -->
-   <!-- Navigation -->
+
+      <!-- Navigation -->
 <nav class="mt-4 sm:mt-1">
     <ul>
         <!-- Home -->
@@ -116,24 +123,24 @@ $pdo = Database::connect();
             </a>
         </li>
 
-        <!-- Enrolled Subjects -->
+        <!-- Users -->
         <li>
             <a href="#" class="flex items-center py-3 px-4 hover:bg-red-500" 
-               onclick="showContent('department', this)">
-               <i class="fas fa-book-open mr-3"></i> 
-               <span class="hidden md:inline">Enrolled Subjects</span>
+               onclick="showContent('admin', this)">
+               <i class="fas fa-building mr-3"></i> 
+               <span class="hidden md:inline">Users</span>
             </a>
         </li>
 
-        <!-- Student by Subjects -->
-        <li>
-            <a href="#" class="flex items-center py-3 px-4 hover:bg-red-500" 
-               onclick="showContent('courses', this)">
-               <i class="fas fa-users mr-3"></i> 
-               <span class="hidden md:inline">Student by Subjects</span>
-               <i class="fas fa-angle-right ml-auto"></i> <!-- Greater than icon -->
-            </a>
+            <!-- Lock and Unlock -->
+            <li>
+        <a href="#" class="flex items-center py-3 px-4 hover:bg-red-500" 
+            onclick="showContent('lock_unlock', this)">
+            <i class="fas fa-lock mr-3"></i> 
+            <span class="hidden md:inline">Lock & Unlock</span>
+        </a>
         </li>
+
 
         <!-- Logout -->
         <li>
@@ -149,27 +156,32 @@ $pdo = Database::connect();
         </aside>
 
         <!-- Main Content -->
-        <main class="flex-1 p-6 overflow-hidden">
+        <main class="flex-1 p-6 overflow-hidden ">
         <button id="toggle-sidebar" class="bg-red-800 text-white p-2 rounded mb-4" onclick="toggleSidebar()">
                 <i class="fas fa-bars"></i> <!-- Toggle Icon -->
             </button>
             <div id="home" class="content-section">
-                <iframe src="home.php" title="Home"></iframe>
+            <iframe src="front_page.php" title="All Student"></iframe> 
             </div>
 
             <div id="profile" class="content-section">
+
                 <iframe src="student/profile/student_profile.php" title="My Profile"></iframe>
             </div>
+      
 
-            <div id="department" class="content-section">
-                <iframe src="student/Enrolled_subject/grades.php" title="Research Fees"></iframe>
+
+            <div id="admin" class="content-section">
+       
+                <iframe src="admin.php" title="Department"></iframe>
             </div>
 
+            <div id="lock_unlock" class="content-section">
+       
+       <iframe src="lock_unlock_user.php" title="Department"></iframe>
+   </div>
 
-            <div id="courses" class="content-section">
-                <iframe src="registrar/instructor/student_by_subject.php" title="Courses"></iframe>
-            </div>
-
+     
 
         </main>
     </div>
@@ -220,5 +232,6 @@ $pdo = Database::connect();
         showContent('home', homeTab);
     }
 </script>
+
 </body>
 </html>

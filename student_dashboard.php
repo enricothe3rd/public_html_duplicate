@@ -54,11 +54,12 @@ if ($student_number) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sidebar with Multiple Content Sections</title>
+    <title>Student Dashboard</title>
     <!-- Tailwind CSS CDN -->
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <!-- Font Awesome CDN -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="icon" type="image/png" href="assets/images/school-logo/bcc-icon.png">
     <style>
         html, body {
             height: 100%;
@@ -156,7 +157,13 @@ if ($student_number) {
                     <?php if ($payment_method == 'installment'): ?>
                     <li><a href="#" class="flex items-center py-3 px-4 hover:bg-red-500" onclick="showContent('make_payments')"><i class="fas fa-credit-card mr-3"></i><span class="hidden md:inline">Make a Payment</span></a></li>
                     <?php endif; ?>
-
+                    <li>
+  <a href="logout.php" class="flex items-center py-3 px-4 hover:bg-red-500 text-white" 
+     onclick="return confirm('Are you sure you want to log out?');">
+    <i class="fas fa-sign-out-alt mr-3"></i> 
+    <span class="hidden md:inline">Logout</span>
+  </a>
+</li>
                 </ul>
             </nav>
 

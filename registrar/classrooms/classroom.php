@@ -116,12 +116,12 @@ public function updateClassroom($id, $room_number, $capacity, $building) {
 }
 
 
-    // Retrieve All Classrooms
-    public function getClassrooms() {
-        $sql = "SELECT * FROM classrooms";
-        $stmt = $this->db->query($sql);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
+ // Retrieve All Classrooms
+public function getClassrooms() {
+    $sql = "SELECT * FROM classrooms ORDER BY room_number ASC"; // Change classroom_name to your actual column name
+    $stmt = $this->db->query($sql);
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
 
     // Retrieve a Classroom by ID
     public function getClassroomById($id) {

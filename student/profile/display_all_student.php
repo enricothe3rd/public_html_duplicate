@@ -21,6 +21,7 @@ try {
         LEFT JOIN courses c ON se.course_id = c.id
         LEFT JOIN sections s ON se.section_id = s.id
         LEFT JOIN departments d ON c.department_id = d.id
+        ORDER BY e.lastname ASC  -- Alphabetize by lastname
     ");
     $stmt->execute();
 
@@ -31,6 +32,7 @@ try {
     echo "Error: " . $e->getMessage();
     exit;
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -95,7 +97,7 @@ try {
                         <?php foreach ($enrollmentData as $enrollment): ?>
                         <tr class="border-b bg-red-50 hover:bg-red-200">
                             <td class="px-6 py-4 whitespace-nowrap"><?= htmlspecialchars($enrollment['student_number']) ?></td>
-                            <td class="px-6 py-4 whitespace-nowrap"><?= htmlspecialchars($enrollment['firstname'] . ' ' . $enrollment['middlename'] . ' ' . $enrollment['lastname'] . ' ' . $enrollment['suffix']) ?></td>
+                            <td class="px-6 py-4 whitespace-nowrap"><?= htmlspecialchars($enrollment['lastname'] . ' ' . $enrollment['middlename'] . ' ' . $enrollment['firstname'] . ' ' . $enrollment['suffix']) ?></td>
                             <td class="px-6 py-4 whitespace-nowrap"><?= htmlspecialchars($enrollment['course_name']) ?></td>
                             <td class="px-6 py-4 whitespace-nowrap"><?= htmlspecialchars($enrollment['section_name']) ?></td>
                             <td class="px-6 py-4 whitespace-nowrap"><?= htmlspecialchars($enrollment['department_name']) ?></td>
