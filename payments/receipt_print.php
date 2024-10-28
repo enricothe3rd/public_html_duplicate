@@ -13,7 +13,8 @@ $pdo = Database::connect();
 $student_number = $_SESSION['student_number'];
 
 // Fetch payment details
-$query = $pdo->prepare("SELECT * FROM payments WHERE student_number = :student_number");
+$query = $pdo->prepare("SELECT * FROM payments WHERE student_number = :student_number  ORDER BY created_at DESC 
+    LIMIT 1");
 $query->execute(['student_number' => $student_number]);
 $paymentDetails = $query->fetch(PDO::FETCH_ASSOC);
 
@@ -21,6 +22,7 @@ if (!$paymentDetails) {
     echo "No payment details found for this student.";
     exit;
 }
+
 
 // Fetch student details
 $getFullName = $pdo->prepare("SELECT * FROM enrollments WHERE student_number = :student_number");

@@ -125,6 +125,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </script>
 </head>
 <body class="flex justify-center items-center h-screen m-0">
+
     <div class="container mx-auto p-6 max-w-2xl">
     <button 
             onclick="goBack()" 
@@ -142,7 +143,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
            required class="mt-1 block w-full bg-red-100  border border-red-300 rounded-md shadow-sm p-2" 
            disabled>
 </div>
-
+<div id="loading-spinner" style="display: none;">
+    <?php include '../loading_spinner.php'; ?>
+</div>
 <div class="mb-4">
     <label for="number_of_units" class="block text-sm font-medium">Your Total Number of Units:</label>
     <input type="number" name="number_of_units" id="number_of_units" 
@@ -254,6 +257,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
 
+
             </tbody>
         </table>
     </div>
@@ -272,7 +276,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         },
         onApprove: function(data, actions) {
             return actions.order.capture().then(function(details) {
-                alert('Transaction completed by ' + details.payer.name.given_name);
+                // alert('Transaction completed by ' + details.payer.name.given_name);
 
                 // Prepare data to send to the server
                 const paymentData = {
@@ -297,9 +301,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 .then(response => response.json()) // Expecting JSON response
                 .then(result => {
                     if (result.success) {
-                        // Redirect to receipt.php
+                        // Show the spinner when starting an AJAX request
+                    function showSpinner() {
+                        document.getElementById('loading-spinner').style.display = 'flex';
+                    }
+
+                    // Hide the spinner after the AJAX request is completed
+                    function hideSpinner() {
+                        document.getElementById('loading-spinner').style.display = 'none';
+                    }
+
+                    // Example AJAX request
+                    showSpinner(); // Show spinner before the request
+                    fetch('sendPayment_to_email.php', {
+                        method: 'GET'
+                    })
+                    .then(response => response.text())
+                    .then(data => {
+                        console.log('Email sent successfully:', data);
+                        hideSpinner(); // Hide spinner after the request
                         window.location.href = 'receipt.php';
-                    } else {
+                    })
+                    .catch(error => {
+                        console.error('Error sending email:', error);
+                        hideSpinner(); // Hide spinner on error
+                    });
+                    }else {
                         alert('Failed to record payment. Please try again.');
                     }
                 })

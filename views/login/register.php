@@ -63,7 +63,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $registration_token = bin2hex(random_bytes(20));
 
            // Insert new user record
-$sql_insert_user = "INSERT INTO users (email, password, role, account_locked, failed_attempts) VALUES (:email, :password, :role, :account_locked, :failed_attempts)";
+            $sql_insert_user = "INSERT INTO users (email, password, role, account_locked, failed_attempts) VALUES (:email, :password, :role, :account_locked, :failed_attempts)";
             $stmt_insert_user = $conn->prepare($sql_insert_user);
 
             if ($stmt_insert_user) {
@@ -71,13 +71,14 @@ $sql_insert_user = "INSERT INTO users (email, password, role, account_locked, fa
                 $stmt_insert_user->bindParam(':password', $passwordHashed);
                 $stmt_insert_user->bindParam(':role', $role);
            // Check if the role is 'student'
-    if ($role === 'student') {
-        $stmt_insert_user->bindValue(':account_locked', 0); // Set account_locked to 0 for students
-        $stmt_insert_user->bindValue(':failed_attempts', 0); // Set failed_attempts to 0 for students
-    } else {
-        $stmt_insert_user->bindValue(':account_locked', 1); // Set account_locked to 1 for other roles
-        $stmt_insert_user->bindValue(':failed_attempts', 3); // Set failed_attempts to 3 for other roles
-    }
+        
+            if ($role === 'student') {
+                $stmt_insert_user->bindValue(':account_locked', 0); // Set account_locked to 0 for students
+                $stmt_insert_user->bindValue(':failed_attempts', 0); // Set failed_attempts to 0 for students
+            } else {
+                $stmt_insert_user->bindValue(':account_locked', 1); // Set account_locked to 1 for other roles
+                $stmt_insert_user->bindValue(':failed_attempts', 3); // Set failed_attempts to 3 for other roles
+            }
                 if ($stmt_insert_user->execute()) {
                     $user_id = $conn->lastInsertId();
 

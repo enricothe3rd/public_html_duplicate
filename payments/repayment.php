@@ -1,87 +1,126 @@
 <?php
 session_start(); // Start the session
 
-// Include the Database class
+// Include the Database class and PHPMailer
 require '../db/db_connection3.php'; // Ensure this path is correct
+require_once '../vendor/fpdf.php'; // Include FPDF library
 
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
+require '../phpmailer/src/PHPMailer.php';
+require '../phpmailer/src/SMTP.php';
+require '../phpmailer/src/Exception.php';
 // Get the PDO instance
 $db = Database::connect(); // Use the Database class to get the PDO instance
 
 // Retrieve student_number from session
 $student_number = isset($_SESSION['student_number']) ? $_SESSION['student_number'] : null;
 
+$successMessage = ''; // Variable to hold success message
 
 if ($student_number) {
+    try {
+        // SQL query to get the sum of installment payments by student_number
+        $sql = "SELECT SUM(installment_down_payment) AS total_installment
+                FROM payments
+                WHERE student_number = :student_number";
 
-        try {
-            // SQL query to get the sum of installment payments by student_number
-            $sql = "SELECT SUM(installment_down_payment) AS total_installment
-                    FROM payments
-                    WHERE student_number = :student_number";
+        $stmt1 = $db->prepare($sql);
+        $stmt1->bindParam(':student_number', $student_number);
+        $stmt1->execute();
 
-            $stmt1 = $db->prepare($sql);
-            $stmt1->bindParam(':student_number', $student_number);
-            $stmt1->execute();
+        // Fetch result
+        $result = $stmt1->fetch(PDO::FETCH_ASSOC);
+        $total_already_payed = isset($result['total_installment']) ? $result['total_installment'] : 0;
 
-            // Fetch result
-            $result = $stmt1->fetch(PDO::FETCH_ASSOC);
-            $total_already_payed = isset($result['total_installment']) ? $result['total_installment'] : 0;
+    } catch (PDOException $e) {
+        echo "Error: " . $e->getMessage();
+    }
 
-        } catch (PDOException $e) {
-            echo "Error: " . $e->getMessage();
-        }
+    // Prepare the SQL statement
+    $stmt = $db->prepare("
+        SELECT number_of_months_payment, monthly_payment, next_payment_due_date, installment_down_payment, miscellaneous_fee, amount_per_unit, number_of_units
+        FROM payments
+        WHERE student_number = :student_number
+    ");
+    
+    // Bind the student_number parameter
+    $stmt->bindParam(':student_number', $student_number, PDO::PARAM_STR);
+    
+    // Execute the query
+    $stmt->execute();
+    
+    // Fetch the result as an associative array
+    $paymentDetails = $stmt->fetch(PDO::FETCH_ASSOC);
 
+    // Number of months payment
+    $number_of_months = $paymentDetails['number_of_months_payment'];
 
+    // Month Payment
+    $monthly_payment = $paymentDetails['monthly_payment'];
 
-        // Prepare the SQL statement
-        $stmt = $db->prepare("
-            SELECT number_of_months_payment, monthly_payment, next_payment_due_date, installment_down_payment, miscellaneous_fee, amount_per_unit, number_of_units
-            FROM payments
-            WHERE student_number = :student_number
-        ");
-        
-        // Bind the student_number parameter
-        $stmt->bindParam(':student_number', $student_number, PDO::PARAM_STR);
-        
-        // Execute the query
-        $stmt->execute();
-        
-        // Fetch the result as an associative array
-        $paymentDetails = $stmt->fetch(PDO::FETCH_ASSOC);
+    // Payment Due Date
+    $payment_due_date = $paymentDetails['next_payment_due_date']; 
 
-   
-       
-        //Number of months payment
-        $number_of_months = $paymentDetails['number_of_months_payment'];
+    // Calculate the Total Installment 
+    $total_installment = $number_of_months * $monthly_payment;
+    
+    // Calculate next payment due date
+    $next_payment_due_date = date('Y-m-d', strtotime($paymentDetails['next_payment_due_date'] . ' +1 month'));// +1 month
 
-        //Month Payment
-        $monthly_payment = $paymentDetails['monthly_payment'];
+    // Calculate that will deduct
+    $remaining_balance = $total_installment - $total_already_payed;
 
-        //Payment Due Date
-        $payment_due_date = $paymentDetails['next_payment_due_date']; 
-
-        // /Calculate the Total Installment 
-        $total_installment = $number_of_months *  $monthly_payment;
-        
-        // Calculate next payment due date
-        $next_payment_due_date = date('Y-m-d', strtotime($paymentDetails['next_payment_due_date'] . ' +1 month'));
-
-        //Calculate that will deduct
-        $remaining_balance = $total_installment -$total_already_payed;
-
-
-
- }
- else {
+} else {
     echo "Student number is not set in the session.";
 }
+
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+
+    $student_email = null;  // Initialize the variable
+
+    if ($student_number) {
+        // Prepare the SQL statement to fetch email, firstname, lastname, middlename, and suffix
+        $stmt = $db->prepare("SELECT email, firstname, lastname, middlename, suffix FROM enrollments WHERE student_number = :student_number");
+        
+        // Bind the parameter
+        $stmt->bindParam(':student_number', $student_number);
+        
+        // Execute the statement
+        $stmt->execute();
+    
+        // Check if any rows were returned
+        if ($stmt->rowCount() > 0) {
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            $student_email = $row['email'];
+    
+            // Now you can use these variables in your application
+        } else {
+            echo "No student found with this student number.";
+        }
+    } else {
+        echo "Student number not found in session.";
+    }
+    
+    $fullname = ucfirst(strtolower($row['lastname'])) . ', ' . ucfirst(strtolower($row['firstname']));
+
+if (!empty($row['suffix'])) {
+    $fullname .= ', ' . ucfirst(strtolower($row['suffix']));
+}
+if (!empty($row['middlename'])) {
+    $fullname .= '., ' . ucfirst(strtolower($row['middlename']));
+}
+
+
     $student_monthly_payment = $_POST['total_amount1']; // Corrected from 'monthly_payment'
     $transaction_id = $_POST['transaction_id']; // Get transaction ID from hidden input
     $amount_per_unit = $paymentDetails['amount_per_unit']; // Number of amount_per_unit
     $miscellaneous_fee = $paymentDetails['miscellaneous_fee']; // Number of miscellaneous_fee
     $number_of_units = $paymentDetails['number_of_units']; // Number of number_of_units
+    // $student_email = 'student@example.com'; // Fetch the email from your database if it's stored
 
     try {
         // Assuming you have variables for $installment_down_payment and $next_payment_due_date
@@ -98,25 +137,88 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ':transaction_id' => $transaction_id,
             ':installment_down_payment' => $installment_down_payment,
             ':next_payment_due_date' => $next_payment_due_date,
-            ':amount_per_unit' =>  $amount_per_unit,
-            ':miscellaneous_fee' =>  $miscellaneous_fee,
-            ':number_of_units' =>  $number_of_units,
+            ':amount_per_unit' => $amount_per_unit,
+            ':miscellaneous_fee' => $miscellaneous_fee,
+            ':number_of_units' => $number_of_units,
         ]);
 
-        echo "Payment processed successfully! Transaction ID: $transaction_id. Next payment due date is " . $next_payment_due_date;
+        // Set the success message
+        $successMessage = "Payment processed successfully! Transaction ID: <strong>$transaction_id</strong>. Next payment due date is <strong>" . $next_payment_due_date . "</strong>.";
+
+        // Store necessary data for PDF generation in the session or as JSON for JavaScript
+        $_SESSION['pdf_data'] = [
+            'student_number' => $student_number,
+            'transaction_id' => $transaction_id,
+            'installment_down_payment' => $installment_down_payment,
+            'next_payment_due_date' => $next_payment_due_date,
+            'total_already_paid' => $total_already_payed,
+        ];
+
+        // Send confirmation email
+        $mail = new PHPMailer(true);
+        try {
+            //Server settings
+            $mail->isSMTP();
+            $mail->Host = 'smtp.gmail.com';
+            $mail->SMTPAuth = true;
+            $mail->Username = 'pedrajetajr22@gmail.com'; // SMTP username
+            $mail->Password = 'fstvwntidussfhvc'; // SMTP password
+            $mail->SMTPSecure = 'tls';
+            $mail->Port = 587;
+
+            //Recipients
+            $mail->setFrom('bcc@gmail.com', 'Binangonan Catholic College Payment');
+            $mail->addAddress($student_email); // Add the recipient's email
+            $mail->addReplyTo('no-reply@example.com', 'No Reply');
+
+            //Content
+            $mail->isHTML(true); 
+            $mail->Subject = 'Payment Confirmation';
+            $mail->Body = "
+            <div style='font-family: Arial, sans-serif; color: #333; line-height: 1.6;'>
+                <h1 style='color: #007BFF; font-size: 24px; margin-bottom: 20px;'>Payment Confirmation</h1>
+                <p style='margin-bottom: 15px;'>Hi,</p>
+                <p style='margin-bottom: 15px;'>We’ve successfully received your payment. Thank you for choosing us!</p>
+                
+                <table style='width: 100%; border-collapse: collapse; margin-bottom: 20px;'>
+                    <tr style='border-bottom: 1px solid #ddd;'>
+                        <td style='padding: 10px 0;'><strong>Name:</strong></td>
+                        <td style='padding: 10px 0;'>{$fullname}</td>
+                    </tr>
+                    <tr style='border-bottom: 1px solid #ddd;'>
+                        <td style='padding: 10px 0;'><strong>Transaction ID:</strong></td>
+                        <td style='padding: 10px 0;'>{$transaction_id}</td>
+                    </tr>
+                    <tr style='border-bottom: 1px solid #ddd;'>
+                        <td style='padding: 10px 0;'><strong>Amount Paid:</strong></td>
+                        <td style='padding: 10px 0;'>{$student_monthly_payment}</td>
+                    </tr>
+                    <tr>
+                        <td style='padding: 10px 0;'><strong>Next Payment Due Date:</strong></td>
+                        <td style='padding: 10px 0;'>{$next_payment_due_date}</td>
+                    </tr>
+                </table>
+            
+                <p style='color: #555; margin-bottom: 15px;'>If you have any questions, feel free to reach out. Keep this email for your records.</p>
+                <p style='margin-bottom: 0;'>Best regards,<br>BCC Team</p>
+            </div>
+            ";
+            
+        
+
+            $mail->send();
+            // echo 'Payment confirmation email sent.';
+
+        } catch (Exception $e) {
+            echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+        }
 
     } catch (Exception $e) {
         echo "Error processing payment: " . $e->getMessage();
     }
 }
-
-
-
-
-
-
-
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -157,6 +259,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         width: 100%;
     }
 </style>
+<script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const successMessage = document.getElementById("success-message");
+            if (successMessage) {
+                setTimeout(() => {
+                    successMessage.classList.add("opacity-0"); // Start fade-out effect
+                    setTimeout(() => {
+                        successMessage.style.display = "none"; // Hide the message after fade-out
+                        // Generate PDF by navigating to the PDF generation endpoint
+                        window.location.href = 'repayment_generate_pdf.php'; // Update the path as needed
+                    }, 500); // Delay to match the fade-out transition
+                }, 3000); // Time in milliseconds before the message starts fading out (3 seconds)
+            }
+        });
+    </script>
+
 
 </head>
 <body class="">
@@ -165,6 +283,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class=" p-6 rounded-lg shadow-md max-w-lg mx-auto">
             <!-- Payment Details --><br><br><br>
             <div class="bg-white p-6 rounded-lg shadow-lg mb-6 max-w-md mx-auto">
+
+            <?php if ($successMessage): ?>
+    <div id="success-message" class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
+        <span class="block sm:inline"><?php echo $successMessage; ?></span>
+    </div>
+<?php endif; ?>
+
     <p class="text-lg font-semibold text-gray-700">
         Number of Installments: 
         <span class="font-bold text-blue-600" id="installment-count"></span>

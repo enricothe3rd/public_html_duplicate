@@ -51,7 +51,9 @@ if (isset($_SESSION['student_number'])) {
     exit;
 }
 
+
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -64,6 +66,63 @@ if (isset($_SESSION['student_number'])) {
 <body class="bg-gray-100">
 
 <div class="max-w-lg mx-auto mt-10 p-8 border border-red-300 rounded-lg shadow-md bg-white">
+<button 
+            onclick="goBack()" 
+            class="mb-4 px-4 py-2 bg-red-700 text-white rounded hover:bg-red-800 transition duration-200 flex items-center"
+        >
+            <i class="fas fa-arrow-left mr-2"></i>
+            Back
+        </button>
+<?php
+
+if (isset($_SESSION['error_message'])): ?>
+    <div id="error-message" class="bg-red-500 text-white p-4 rounded-md mb-4">
+        <?php 
+            echo htmlspecialchars($_SESSION['error_message']); 
+            unset($_SESSION['error_message']); // Clear message after displaying it
+        ?>
+    </div>
+<?php endif; ?>
+
+<script>
+    // Check if the error message is present
+    window.onload = function() {
+        const errorMessage = document.getElementById('error-message');
+        if (errorMessage) {
+            // Set a timeout to hide the error message after 3 seconds (3000 milliseconds)
+            setTimeout(() => {
+                errorMessage.style.display = 'none'; // Hide the message
+            }, 10000);
+        }
+    };
+</script>
+
+<!-- Display success message if set -->
+<?php if (isset($_SESSION['success_message'])): ?>
+    <div id="success-message" class="bg-green-500 text-white p-4 rounded-md mb-4">
+        <?php 
+            echo htmlspecialchars($_SESSION['success_message']); 
+            unset($_SESSION['success_message']); // Clear message after displaying it
+        ?>
+    </div>
+    
+    <script>
+        // Redirect after 3 seconds (3000 milliseconds)
+        setTimeout(function() {
+            window.location.href = 'payment_form.php'; // Change to your desired URL
+        }, 3000);
+
+        window.onload = function() {
+            const successMessage = document.getElementById('success-message');
+            if (successMessage) {
+                // Set a timeout to hide the success message after 3 seconds (3000 milliseconds)
+                setTimeout(() => {
+                    successMessage.style.display = 'none'; // Hide the message
+                }, 3000);
+            }
+        };
+    </script>
+<?php endif; ?>
     <h2 class="text-3xl font-bold text-red-800 mb-6">Select Your Course</h2>
     <form id="selectionForm" method="POST" action="submit_selection.php">
         
@@ -80,7 +139,7 @@ if (isset($_SESSION['student_number'])) {
             <label for="school_year" class="block text-sm font-medium text-red-700">Select School Year</label>
             <div class="flex items-center border border-red-300 rounded-md shadow-sm">
                 <i class="fas fa-calendar-alt px-3 text-red-500"></i> <!-- School Year icon -->
-                <select name="school_year" id="school_year" class="w-full h-12 px-3 bg-red-50 text-red-800 focus:outline-none focus:ring-2 focus:ring-red-500 rounded-md transition duration-200" onchange="fetchCourses()">
+                <select name="school_year" id="school_year" class="w-full h-12 px-3 bg-red-50 text-red-800 focus:outline-none" onchange="fetchCourses()">
                     <option value="">Select School Year</option>
                     <?php foreach ($school_years as $year): ?>
                         <option value="<?php echo htmlspecialchars($year['id']); ?>">
@@ -95,7 +154,7 @@ if (isset($_SESSION['student_number'])) {
             <label for="semester" class="block text-sm font-medium text-red-700">Select Semester</label>
             <div class="flex items-center border border-red-300 rounded-md shadow-sm">
                 <i class="fas fa-clock px-3 text-red-500"></i> <!-- Semester icon -->
-                <select name="semester" id="semester" class="w-full h-12 px-3 bg-red-50 text-red-800 focus:outline-none focus:ring-2 focus:ring-red-500 rounded-md transition duration-200" onchange="fetchCourses()">
+                <select name="semester" id="semester" class="w-full h-12 px-3 bg-red-50 text-red-800 focus:outline-none " onchange="fetchCourses()">
                     <option value="">Select Semester</option>
                     <?php foreach ($semesters as $semester): ?>
                         <option value="<?php echo htmlspecialchars($semester['id']); ?>">
@@ -110,7 +169,7 @@ if (isset($_SESSION['student_number'])) {
             <label for="department" class="block text-sm font-medium text-red-700">Select Department</label>
             <div class="flex items-center border border-red-300 rounded-md shadow-sm">
                 <i class="fas fa-building px-3 text-red-500"></i> <!-- Department icon -->
-                <select name="department" id="department" class="w-full h-12 px-3 bg-red-50 text-red-800 focus:outline-none focus:ring-2 focus:ring-red-500 rounded-md transition duration-200" onchange="fetchCourses()">
+                <select name="department" id="department" class="w-full h-12 px-3 bg-red-50 text-red-800 focus:outline-none " onchange="fetchCourses()">
                     <option value="">Select Department</option>
                     <?php foreach ($departments as $department): ?>
                         <option value="<?php echo htmlspecialchars($department['id']); ?>">
@@ -125,7 +184,7 @@ if (isset($_SESSION['student_number'])) {
             <label for="course" class="block text-sm font-medium text-red-700">Select Course</label>
             <div class="flex items-center border border-red-300 rounded-md shadow-sm">
                 <i class="fas fa-book px-3 text-red-500"></i> <!-- Course icon -->
-                <select name="course" id="course" class="w-full h-12 px-3 bg-red-50 text-red-800 focus:outline-none focus:ring-2 focus:ring-red-500 rounded-md transition duration-200" onchange="fetchSections(this.value)">
+                <select name="course" id="course" class="w-full h-12 px-3 bg-red-50 text-red-800 focus:outline-none " onchange="fetchSections(this.value)">
                     <option value="">Select Course</option>
                 </select>
             </div>
@@ -241,7 +300,7 @@ function fetchSections(courseId) {
 
                             const label = document.createElement('label');
                             label.htmlFor = `section-${section.id}`;
-                            label.textContent = `Section: ${section.name} - ID: ${section.id}`;
+                            label.textContent = `Section: ${section.name} `;
                             label.className = "ml-2 text-red-700";
 
                             const subjectsContainer = document.createElement('div');
@@ -434,6 +493,10 @@ document.getElementById('submitButton').addEventListener('click', function (e) {
 
 
 </script>
-
+<script>
+    function goBack() {
+        window.history.back(); // Navigates to the previous page
+    }
+</script>
 </body>
 </html>
