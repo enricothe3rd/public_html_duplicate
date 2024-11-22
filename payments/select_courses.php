@@ -139,7 +139,11 @@ if (isset($_SESSION['error_message'])): ?>
             <label for="school_year" class="block text-sm font-medium text-red-700">Select School Year</label>
             <div class="flex items-center border border-red-300 rounded-md shadow-sm">
                 <i class="fas fa-calendar-alt px-3 text-red-500"></i> <!-- School Year icon -->
+<<<<<<< HEAD
                 <select name="school_year" id="school_year" class="w-full h-12 px-3 bg-red-50 text-red-800 focus:outline-none " onchange="fetchCourses()">
+=======
+                <select name="school_year" id="school_year" class="w-full h-12 px-3 bg-red-50 text-red-800 focus:outline-none" onchange="fetchCourses()">
+>>>>>>> c9683a1ae74a68f06ae55803e5bcd1740a1a2b49
                     <option value="">Select School Year</option>
                     <?php foreach ($school_years as $year): ?>
                         <option value="<?php echo htmlspecialchars($year['id']); ?>">

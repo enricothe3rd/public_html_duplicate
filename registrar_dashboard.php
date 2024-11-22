@@ -215,6 +215,7 @@ require 'session_registrar.php';
             </a>
         </li>
                 <!-- Logout -->
+<<<<<<< HEAD
                          <li>
   <a href="javascript:void(0);" onclick="toggleModal(true)" class="flex items-center py-3 px-4 hover:bg-red-500 text-white rounded-lg transition ease-in-out duration-300">
     <i class="fas fa-sign-out-alt mr-3"></i> 
@@ -222,6 +223,15 @@ require 'session_registrar.php';
   </a>
 </li>
 <?php include 'logout_modal.php'; ?>
+=======
+                <li>
+            <a href="logout.php" class="flex items-center py-3 px-4 hover:bg-red-500 text-white" 
+               onclick="return confirm('Are you sure you want to log out?');">
+               <i class="fas fa-sign-out-alt mr-3"></i> 
+               <span class="hidden md:inline">Logout</span>
+            </a>
+        </li>
+>>>>>>> c9683a1ae74a68f06ae55803e5bcd1740a1a2b49
     </ul>
 </nav>
 

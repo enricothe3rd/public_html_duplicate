@@ -135,6 +135,7 @@ $pdo = Database::connect();
             </a>
         </li>
 
+<<<<<<< HEAD
                 <!-- Student by Subjects -->
                 <li>
             <a href="#" class="flex items-center py-3 px-4 hover:bg-red-500" 
@@ -152,6 +153,16 @@ $pdo = Database::connect();
   </a>
 </li>
 <?php include 'logout_modal.php'; ?>
+=======
+        <!-- Logout -->
+        <li>
+            <a href="logout.php" class="flex items-center py-3 px-4 hover:bg-red-500 text-white" 
+               onclick="return confirm('Are you sure you want to log out?');">
+               <i class="fas fa-sign-out-alt mr-3"></i> 
+               <span class="hidden md:inline">Logout</span>
+            </a>
+        </li>
+>>>>>>> c9683a1ae74a68f06ae55803e5bcd1740a1a2b49
     </ul>
 </nav>
 

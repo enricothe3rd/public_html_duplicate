@@ -117,6 +117,7 @@ if ($student_number) {
         }
 
         }
+        
     </style>
 
 
@@ -143,6 +144,7 @@ if ($student_number) {
                     <?php endif; ?>
 
                     <?php if (empty($payment_method)): ?>
+<<<<<<< HEAD
                          <li>
                             <a href="#" class="flex items-center py-3 px-4 hover:bg-red-500" onclick="showContent('enrollment')">
                                 <i class="fas fa-user-plus mr-3"></i><span class="hidden md:inline">Enrollment</span>
@@ -154,6 +156,19 @@ if ($student_number) {
                                 <i class="fas fa-user-plus mr-3"></i><span class="hidden md:inline">Enrollment</span>
                             </a>
                         </li> -->
+=======
+                        <!-- <li>
+                            <a href="#" class="flex items-center py-3 px-4 hover:bg-red-500" onclick="showContent('enrollment')">
+                                <i class="fas fa-user-plus mr-3"></i><span class="hidden md:inline">Enrollment</span>
+                            </a>
+                        </li> -->
+                    <?php endif; ?>
+                    <li>
+                            <a href="#" class="flex items-center py-3 px-4 hover:bg-red-500" onclick="showContent('enrollment')">
+                                <i class="fas fa-user-plus mr-3"></i><span class="hidden md:inline">Enrollment</span>
+                            </a>
+                        </li>
+>>>>>>> c9683a1ae74a68f06ae55803e5bcd1740a1a2b49
                     <?php if (!empty($payment_status)): ?>
                     <li><a href="#" class="flex items-center py-3 px-4 hover:bg-red-500" onclick="showContent('department')"><i class="fas fa-file-invoice-dollar mr-3"></i><span class="hidden md:inline">My Payments</span></a></li>
                     <?php endif; ?>
@@ -161,7 +176,11 @@ if ($student_number) {
                     <?php if ($payment_method == 'installment'): ?>
                     <li><a href="#" class="flex items-center py-3 px-4 hover:bg-red-500" onclick="showContent('make_payments')"><i class="fas fa-credit-card mr-3"></i><span class="hidden md:inline">Make a Payment</span></a></li>
                     <?php endif; ?>
+<<<<<<< HEAD
                      <li>
+=======
+                    <li>
+>>>>>>> c9683a1ae74a68f06ae55803e5bcd1740a1a2b49
   <a href="javascript:void(0);" onclick="toggleModal(true)" class="flex items-center py-3 px-4 hover:bg-red-500 text-white rounded-lg transition ease-in-out duration-300">
     <i class="fas fa-sign-out-alt mr-3"></i> 
     <span class="hidden md:inline">Logout</span>
@@ -196,12 +215,21 @@ if ($student_number) {
             <?php endif; ?>
 
             <?php if (empty($payment_method)): ?>
+<<<<<<< HEAD
              <div id="enrollment" class="content-section">
                 <iframe src="payments/enrollments/create_enrollment.php" title="New Enrollments"></iframe>
             </div> 
             <?php endif; ?>       <!--   <div id="enrollment" class="content-section">
                 <iframe src="payments/enrollments/create_enrollment.php" title="New Enrollments"></iframe>
             </div> -->
+=======
+            <!-- <div id="enrollment" class="content-section">
+                <iframe src="payments/enrollments/create_enrollment.php" title="New Enrollments"></iframe>
+            </div> -->
+            <?php endif; ?>          <div id="enrollment" class="content-section">
+                <iframe src="payments/enrollments/create_enrollment.php" title="New Enrollments"></iframe>
+            </div>
+>>>>>>> c9683a1ae74a68f06ae55803e5bcd1740a1a2b49
 
             <?php if (!empty($payment_status)): ?>
             <div id="department" class="content-section">
@@ -219,7 +247,11 @@ if ($student_number) {
         </main>
     </div>
 
+<<<<<<< HEAD
   <script>
+=======
+    <script>
+>>>>>>> c9683a1ae74a68f06ae55803e5bcd1740a1a2b49
     function showContent(id, element) {
         // Hide all content sections
         document.querySelectorAll('.content-section').forEach(section => {
@@ -234,8 +266,10 @@ if ($student_number) {
             tab.classList.remove('tab-active');
         });
 
-        // Add active class to the clicked tab
-        element.classList.add('tab-active');
+        // Add active class to the clicked tab (if available)
+        if (element) {
+            element.classList.add('tab-active');
+        }
 
         // Show sidebar on mobile
         if (window.innerWidth <= 768) {
@@ -252,6 +286,7 @@ if ($student_number) {
         sidebar.classList.toggle('sidebar-visible');
     }
 
+<<<<<<< HEAD
     // Check if there is a saved section in localStorage
     const savedSection = localStorage.getItem('selectedSection');
     if (savedSection) {
@@ -260,6 +295,25 @@ if ($student_number) {
         // Default to showing home if no section is saved
         showContent('home', document.querySelector(`nav a[href='#'][onclick*="home"]`));
     }
+=======
+ // Check if there is a saved section in localStorage
+const savedSection = localStorage.getItem('selectedSection');
+if (savedSection) {
+    const savedTab = document.querySelector(`nav a[onclick*="${savedSection}"]`);
+    if (savedTab) {
+        showContent(savedSection, savedTab);
+    } else {
+        
+        const homeTab = document.querySelector(`nav a[onclick*="home"]`);
+        showContent('home', homeTab);
+    }
+} else {
+
+    const homeTab = document.querySelector(`nav a[onclick*="home"]`);
+    showContent('home', homeTab);
+}
+
+>>>>>>> c9683a1ae74a68f06ae55803e5bcd1740a1a2b49
 </script>
 </body>
 </html>

@@ -84,7 +84,11 @@ $fullname = ucfirst(strtoupper($student_details['lastname'])) . ", " . ucfirst(s
         <div class="flex justify-center space-x-4 mt-4">
             <a href="receipt_print.php" class="bg-blue-500 text-white font-semibold py-2 px-6 rounded-button button">
                 Print Receipt
+<<<<<<< HEAD
             </a>
+=======
+            </a><!-- Button to trigger the modal -->
+>>>>>>> c9683a1ae74a68f06ae55803e5bcd1740a1a2b49
 
 <a id="printCorBtn" class="bg-blue-500 text-white font-semibold py-2 px-6 rounded-button button">
     Print COR
@@ -124,10 +128,20 @@ $fullname = ucfirst(strtoupper($student_details['lastname'])) . ", " . ucfirst(s
         modal1.classList.add('hidden');
     };
 
+<<<<<<< HEAD
 // Close modal when the cancel button is clicked
     cancelBtn2.onclick = function() {
         modal1.classList.add('hidden');
     };
+=======
+    
+    // Close modal when the cancel button is clicked
+    cancelBtn2.onclick = function() {
+        modal1.classList.add('hidden');
+    };
+
+
+>>>>>>> c9683a1ae74a68f06ae55803e5bcd1740a1a2b49
     // Handle COR Option 1 action
     cor1Btn.onclick = function() {
         window.location.href = 'print_cor.php'; // Redirect to print_cor.php
@@ -145,6 +159,12 @@ $fullname = ucfirst(strtoupper($student_details['lastname'])) . ", " . ucfirst(s
         }
     };
 </script>
+<<<<<<< HEAD
+=======
+
+
+      
+>>>>>>> c9683a1ae74a68f06ae55803e5bcd1740a1a2b49
             <!-- Button to navigate to the dashboard -->
 <button onclick="navigateToDashboard()" class="bg-green-500 text-white font-semibold py-2 px-6 rounded-button button">
     Go to Dashboard
