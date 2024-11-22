@@ -147,18 +147,35 @@ class Payment {
     }
 
     public function getSubjectIdsByStudentNumber($student_number) {
+        // Start the session to access session variables
+      
+    
+        // Retrieve semester and school year from session
+        $semester = $_SESSION['selected_semester'];
+        $schoolYear = $_SESSION['selected_school_year'];
+    
         try {
             $sql = "SELECT subject_id 
                     FROM subject_enrollments 
-                    WHERE student_number = :student_number";
+                    WHERE student_number = :student_number 
+                      AND semester = :semester 
+                      AND school_year = :school_year";
             $stmt = $this->conn->prepare($sql);
-            $stmt->execute([':student_number' => $student_number]);
+            
+            // Execute the statement with bound parameters
+            $stmt->execute([
+                ':student_number' => $student_number,
+                ':semester' => $semester,
+                ':school_year' => $schoolYear
+            ]);
+            
             return $stmt->fetchAll(PDO::FETCH_ASSOC); // Return all subject IDs
         } catch (PDOException $e) {
             error_log("Database error: " . $e->getMessage());
             return []; // Return empty array on error
         }
     }
+    
 
     public function getTotalUnitsForStudent($student_number) {
         // Get all subject IDs for the student

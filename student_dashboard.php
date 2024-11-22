@@ -54,11 +54,12 @@ if ($student_number) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sidebar with Multiple Content Sections</title>
+    <title>Student Dashboard</title>
     <!-- Tailwind CSS CDN -->
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <!-- Font Awesome CDN -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="icon" type="image/png" href="assets/images/school-logo/bcc-icon.png">
     <style>
         html, body {
             height: 100%;
@@ -142,13 +143,17 @@ if ($student_number) {
                     <?php endif; ?>
 
                     <?php if (empty($payment_method)): ?>
-                        <li>
+                         <li>
                             <a href="#" class="flex items-center py-3 px-4 hover:bg-red-500" onclick="showContent('enrollment')">
                                 <i class="fas fa-user-plus mr-3"></i><span class="hidden md:inline">Enrollment</span>
                             </a>
-                        </li>
+                        </li> 
                     <?php endif; ?>
-
+              <!--      <li>
+                          <a href="#" class="flex items-center py-3 px-4 hover:bg-red-500" onclick="showContent('enrollment')">
+                                <i class="fas fa-user-plus mr-3"></i><span class="hidden md:inline">Enrollment</span>
+                            </a>
+                        </li> -->
                     <?php if (!empty($payment_status)): ?>
                     <li><a href="#" class="flex items-center py-3 px-4 hover:bg-red-500" onclick="showContent('department')"><i class="fas fa-file-invoice-dollar mr-3"></i><span class="hidden md:inline">My Payments</span></a></li>
                     <?php endif; ?>
@@ -156,7 +161,13 @@ if ($student_number) {
                     <?php if ($payment_method == 'installment'): ?>
                     <li><a href="#" class="flex items-center py-3 px-4 hover:bg-red-500" onclick="showContent('make_payments')"><i class="fas fa-credit-card mr-3"></i><span class="hidden md:inline">Make a Payment</span></a></li>
                     <?php endif; ?>
-
+                     <li>
+  <a href="javascript:void(0);" onclick="toggleModal(true)" class="flex items-center py-3 px-4 hover:bg-red-500 text-white rounded-lg transition ease-in-out duration-300">
+    <i class="fas fa-sign-out-alt mr-3"></i> 
+    <span class="hidden md:inline">Logout</span>
+  </a>
+</li>
+<?php include 'logout_modal.php'; ?>
                 </ul>
             </nav>
 
@@ -185,10 +196,12 @@ if ($student_number) {
             <?php endif; ?>
 
             <?php if (empty($payment_method)): ?>
-            <div id="enrollment" class="content-section">
+             <div id="enrollment" class="content-section">
                 <iframe src="payments/enrollments/create_enrollment.php" title="New Enrollments"></iframe>
-            </div>
-            <?php endif; ?>
+            </div> 
+            <?php endif; ?>       <!--   <div id="enrollment" class="content-section">
+                <iframe src="payments/enrollments/create_enrollment.php" title="New Enrollments"></iframe>
+            </div> -->
 
             <?php if (!empty($payment_status)): ?>
             <div id="department" class="content-section">
@@ -206,8 +219,8 @@ if ($student_number) {
         </main>
     </div>
 
-    <script>
-    function showContent(id) {
+  <script>
+    function showContent(id, element) {
         // Hide all content sections
         document.querySelectorAll('.content-section').forEach(section => {
             section.style.display = 'none';
@@ -216,8 +229,8 @@ if ($student_number) {
         // Show the selected content section
         document.getElementById(id).style.display = 'block';
 
-            // Remove active class from all tabs
-            document.querySelectorAll('nav a').forEach(tab => {
+        // Remove active class from all tabs
+        document.querySelectorAll('nav a').forEach(tab => {
             tab.classList.remove('tab-active');
         });
 
@@ -233,25 +246,20 @@ if ($student_number) {
         localStorage.setItem('selectedSection', id);
     }
 
-        // Function to toggle sidebar visibility
-        function toggleSidebar() {
+    // Function to toggle sidebar visibility
+    function toggleSidebar() {
         const sidebar = document.getElementById('sidebar');
         sidebar.classList.toggle('sidebar-visible');
     }
 
-
-          // Check if there is a saved section in localStorage
-          const savedSection = localStorage.getItem('selectedSection');
-        if (savedSection) {
-            showContent(savedSection, document.querySelector(`nav a[href='#'][onclick*="${savedSection}"]`));
-        } else {
-            // Default to showing home if no section is saved
-            showContent('home', document.querySelector(`nav a[href='#'][onclick*="home"]`));
-        }
-
-
-
-
-    </script>
+    // Check if there is a saved section in localStorage
+    const savedSection = localStorage.getItem('selectedSection');
+    if (savedSection) {
+        showContent(savedSection, document.querySelector(`nav a[href='#'][onclick*="${savedSection}"]`));
+    } else {
+        // Default to showing home if no section is saved
+        showContent('home', document.querySelector(`nav a[href='#'][onclick*="home"]`));
+    }
+</script>
 </body>
 </html>

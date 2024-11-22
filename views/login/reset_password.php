@@ -78,7 +78,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reset Password</title>
+    <title>BCC Reset Password</title>
+            <link rel="icon" type="image/png" href="../../assets/images/school-logo/bcc-icon.png">
     <link href="../../assets/css/output.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <style>

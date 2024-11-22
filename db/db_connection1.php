@@ -2,7 +2,10 @@
 // db_connection.php
 
 $host = 'localhost';
-$db   = 'token_db1';
+$db   = 'u918134096_token_db2';
+// $user = 'u918134096_localhost2';
+// $pass = 'Enrico@12';
+
 $user = 'root';
 $pass = '';
 $charset = 'utf8mb4';

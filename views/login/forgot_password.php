@@ -59,107 +59,113 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $mail->Subject = 'Password Reset Request';
 
             // Modern email body
-            $mail->Body = '
-            <html>
-            <head>
-                <style>
-                    body {
-                        font-family: Arial, sans-serif;
-                        background-color: #f2f2f2;
-                        margin: 0;
-                        padding: 0;
-                    }
-                    .email-container {
-                        width: 100%;
-                        max-width: 600px;
-                        margin: 0 auto;
-                        background-color: #ffffff;
-                        border-radius: 8px;
-                        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-                        overflow: hidden;
-                    }
-                    .header {
-                        background-color: #B80000;
-                        color: #ffffff;
-                        text-align: center;
-                        padding: 20px;
-                    }
-                    .header img {
-                        max-width: 100%;
-                        height: auto;
-                    }
-                    .content {
-                        padding: 30px;
-                        text-align: center;
-                    }
-                    .content h1 {
-                        color: #333333;
-                        font-size: 24px;
-                        margin-bottom: 20px;
-                    }
-                    .content p {
-                        color: #666666;
-                        font-size: 16px;
-                        line-height: 1.5;
-                    }
-                    a {
-                        color: #FFFFFF;
-                    }
-                    .btn {
-                        display: inline-block;
-                        padding: 12px 24px;
-                        font-size: 16px;
-                        font-weight: bold;
-                        color: #FFFFFF;
-                        background-color: #B80000;
-                        text-decoration: none;
-                        border-radius: 4px;
-                        margin-top: 20px;
-                    }
-                    .footer {
-                        background-color: #f9f9f9;
-                        padding: 20px;
-                        text-align: center;
-                        color: #999999;
-                        font-size: 14px;
-                    }
-            
-                    @media only screen and (max-width: 600px) {
-                        .email-container {
-                            width: 90%;
-                        }
-                        .content {
-                            padding: 20px;
-                        }
-                        .content h1 {
-                            font-size: 20px;
-                        }
-                        .content p {
-                            font-size: 14px;
-                        }
-                        .btn {
-                            padding: 10px 20px;
-                            font-size: 14px;
-                        }
-                    }
-                </style>
-            </head>
-            <body>
-                <div class="email-container">
-                    <div class="header">
-                        <img src="https://bccenrollment.xyz/bcc-banner.png" alt="Company Logo">
-                    </div>
-                    <div class="content">
-                        <h1>Password Reset Request</h1>
-                        <p>You have requested a password reset. Click the button below to reset your password:</p>
-                        <a href="http://localhost/Enrollment-System/views/login/reset_password.php?token=' . $reset_token . '" class="btn">Reset Password</a>
-                    </div>
-                    <div class="footer">
-                        <p>Binangonan Catholic College<br>123 Street Address<br>City, State, ZIP<br>© ' . date('Y') . ' BCC. All rights reserved.</p>
-                    </div>
-                </div>
-            </body>
-            </html>';
+          $mail->Body = '
+<html>
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 0;
+        }
+        .email-container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        .header {
+            background-color: #B80000;
+            color: #ffffff;
+            text-align: center;
+            padding: 20px;
+        }
+        .header img {
+            max-width: 80%;
+            height: auto;
+        }
+        .content {
+            padding: 30px;
+            text-align: center;
+        }
+        .content h1 {
+            color: #333333;
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+        .content p {
+            color: #666666;
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #FFFFFF;
+            background-color: #B80000;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+        .btn:hover {
+            background-color: #8f0000;
+        }
+        .footer {
+            background-color: #f9f9f9;
+            padding: 20px;
+            text-align: center;
+            color: #999999;
+            font-size: 14px;
+        }
+        .footer p {
+            margin: 5px 0;
+            line-height: 1.5;
+        }
+        @media only screen and (max-width: 600px) {
+            .email-container {
+                width: 90%;
+            }
+            .content {
+                padding: 20px;
+            }
+            .content h1 {
+                font-size: 20px;
+            }
+            .content p {
+                font-size: 14px;
+            }
+            .btn {
+                padding: 10px 20px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <div class="header">
+            <img src="https://slategray-vulture-304941.hostingersite.com/assets/images/bcc-banner.png" alt="Binangonan Catholic College">
+        </div>
+        <div class="content">
+            <h1>Password Reset Request</h1>
+            <p>You have requested a password reset. Click the button below to reset your password:</p>
+            <a href="https://slategray-vulture-304941.hostingersite.com//views/login/reset_password.php?token=' . $reset_token . '" class="btn">Reset Password</a>
+        </div>
+        <div class="footer">
+            <p>Binangonan Catholic College<br>59 M.L. Quezon, Libis<br>Binangonan, 1940 Rizal</p>
+            <p>© ' . date('Y') . ' BCC. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>';
+
 
             if (!$mail->send()) {
                 $msg = "Error sending email: " . $mail->ErrorInfo;
@@ -183,7 +189,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Forgot Password</title>
+    <title>BCC Forgot Password</title>
+            <link rel="icon" type="image/png" href="../../assets/images/school-logo/bcc-icon.png">
     <link href="../../assets/css/output.css" rel="stylesheet">
     <style>
         /* General message styling */

@@ -119,29 +119,76 @@ public function create($subject_id, $section_id, $day_of_week, $start_time, $end
         return $stmt->fetch();
     }
 
-    // Get all schedules
-    public function getAllSchedules() {
-        try {
-            $stmt = $this->pdo->prepare(
-                'SELECT s.id, subj.title AS subject_name, sec.name AS section_name, 
-       s.day_of_week, s.start_time, s.end_time, c.room_number, 
-       c.capacity, c.building
-FROM schedules s
-LEFT JOIN subjects subj ON s.subject_id = subj.id
-LEFT JOIN sections sec ON s.section_id = sec.id
-LEFT JOIN classrooms c ON s.room = c.id;  -- Corrected join: schedules.room links to classrooms.id
-' // Join classrooms with trimmed values
-            );
+//     // Get all schedules
+//     public function getAllSchedules() {
+//         try {
+//             $stmt = $this->pdo->prepare(
+//                 'SELECT s.id, subj.title AS subject_name, sec.name AS section_name, 
+//        s.day_of_week, s.start_time, s.end_time, c.room_number, 
+//        c.capacity, c.building
+// FROM schedules s
+// LEFT JOIN subjects subj ON s.subject_id = subj.id
+// LEFT JOIN sections sec ON s.section_id = sec.id
+// LEFT JOIN classrooms c ON s.room = c.id;  -- Corrected join: schedules.room links to classrooms.id
+// ' // Join classrooms with trimmed values
+//             );
             
-            $stmt->execute();
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (PDOException $e) {
-            // Log the error and return an empty array
-            error_log("Database query error: " . $e->getMessage());
-            return [];
-        }
-    }
+//             $stmt->execute();
+//             return $stmt->fetchAll(PDO::FETCH_ASSOC);
+//         } catch (PDOException $e) {
+//             // Log the error and return an empty array
+//             error_log("Database query error: " . $e->getMessage());
+//             return [];
+//         }
+//     }
     
+
+// Get all schedules by subject name
+// public function getAllSchedules() {
+//     try {
+//         $stmt = $this->pdo->prepare(
+//             'SELECT s.id, subj.title AS subject_name, sec.name AS section_name, 
+//              s.day_of_week, s.start_time, s.end_time, c.room_number, 
+//              c.capacity, c.building
+//             FROM schedules s
+//             LEFT JOIN subjects subj ON s.subject_id = subj.id
+//             LEFT JOIN sections sec ON s.section_id = sec.id
+//             LEFT JOIN classrooms c ON s.room = c.id
+//             ORDER BY subj.title ASC' // Alphabetize by subject_name
+//         );
+        
+//         $stmt->execute();
+//         return $stmt->fetchAll(PDO::FETCH_ASSOC);
+//     } catch (PDOException $e) {
+//         // Log the error and return an empty array
+//         error_log("Database query error: " . $e->getMessage());
+//         return [];
+//     }
+// }
+
+// Get all schedules
+public function getAllSchedules() {
+    try {
+        $stmt = $this->pdo->prepare(
+            'SELECT s.id, subj.title AS subject_name, sec.name AS section_name, 
+             s.day_of_week, s.start_time, s.end_time, c.room_number, 
+             c.capacity, c.building
+            FROM schedules s
+            LEFT JOIN subjects subj ON s.subject_id = subj.id
+            LEFT JOIN sections sec ON s.section_id = sec.id
+            LEFT JOIN classrooms c ON s.room = c.id
+            ORDER BY sec.name ASC' // Alphabetize by section_name
+        );
+        
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        // Log the error and return an empty array
+        error_log("Database query error: " . $e->getMessage());
+        return [];
+    }
+}
+
 
     // Get all subjects
     public function getAllSubjects() {

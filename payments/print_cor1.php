@@ -57,40 +57,45 @@ try {
         // echo "Student number not found in session.\n";
     }
 
-    // Adjust column names to match your actual database structure
-    $SubjectStmt = $pdo->prepare("
-        SELECT 
-            se.id,
-            se.student_number,
-            s.name AS section_name,
-            d.name AS department_name,
-            c.course_name AS course_name,
-            sub.code AS subject_code,
-            sub.title AS subject_title,
-            sub.units AS subject_units,
-            sem.semester_name AS semester_name,
-            sch.day_of_week AS day_of_week,
-            sch.start_time AS start_time,
-            sch.end_time AS end_time,
-            sch.room AS room,
-            se.school_year -- Ensure this column is selected
-        FROM subject_enrollments se
-        LEFT JOIN sections s ON se.section_id = s.id
-        LEFT JOIN departments d ON se.department_id = d.id
-        LEFT JOIN courses c ON se.course_id = c.id
-        LEFT JOIN subjects sub ON se.subject_id = sub.id
-        LEFT JOIN semesters sem ON sub.semester_id = sem.id
-        LEFT JOIN schedules sch ON se.schedule_id = sch.id
-        WHERE se.student_number = :student_number
-    ");
-
-    // Bind the session student number to the SQL statement
-    $SubjectStmt->bindParam(':student_number', $_SESSION['student_number'], PDO::PARAM_STR);
-    // Execute the statement
-    $SubjectStmt->execute();
-
-    // Fetch the subjects
-    $subjects = $SubjectStmt->fetchAll(PDO::FETCH_ASSOC);
+ // Adjust column names to match your actual database structure
+ $SubjectStmt = $pdo->prepare("
+ SELECT 
+     se.id,
+     se.student_number,
+     s.name AS section_name,
+     d.name AS department_name,
+     c.course_name AS course_name,
+     sub.code AS subject_code,
+     sub.title AS subject_title,
+     sub.units AS subject_units,
+     sem.semester_name AS semester_name,
+     sch.day_of_week AS day_of_week,
+     sch.start_time AS start_time,
+     sch.end_time AS end_time,
+     sch.room AS room,
+     se.school_year -- Ensure this column is selected
+ FROM subject_enrollments se
+ LEFT JOIN sections s ON se.section_id = s.id
+ LEFT JOIN departments d ON se.department_id = d.id
+ LEFT JOIN courses c ON se.course_id = c.id
+ LEFT JOIN subjects sub ON se.subject_id = sub.id
+ LEFT JOIN semesters sem ON sub.semester_id = sem.id
+ LEFT JOIN schedules sch ON se.schedule_id = sch.id
+ WHERE se.student_number = :student_number
+ AND sem.semester_name = :semester_name
+ AND se.school_year = :school_year
+ ");
+ 
+ // Bind the session values to the SQL statement
+ $SubjectStmt->bindParam(':student_number', $_SESSION['student_number'], PDO::PARAM_STR);
+ $SubjectStmt->bindParam(':semester_name', $_SESSION['selected_semester'], PDO::PARAM_STR);
+ $SubjectStmt->bindParam(':school_year', $_SESSION['selected_school_year'], PDO::PARAM_STR);
+ 
+ // Execute the statement
+ $SubjectStmt->execute();
+ 
+ // Fetch the subjects
+ $subjects = $SubjectStmt->fetchAll(PDO::FETCH_ASSOC);
 
     // Debugging statement to check fetched subjects
     if (empty($subjects)) {
@@ -103,34 +108,38 @@ try {
     }
 
     // SQL query to fetch payment details based on student_number from the session
+   
     $paymentStmt = $pdo->prepare("
-        SELECT 
-            p.id,
-            p.student_number,
-            p.number_of_units,
-            p.amount_per_unit,
-            p.miscellaneous_fee,
-            p.total_payment,
-            p.payment_method,
-            IFNULL(p.research_fee, '') AS research_fee,
-            IFNULL(p.transfer_fee, '') AS transfer_fee,
-            IFNULL(p.overload_fee, '') AS overload_fee,
-            p.created_at,
-            p.updated_at,
-            p.transaction_id
-        FROM payments p
-        WHERE p.student_number = :student_number
+    SELECT 
+        p.id,
+        p.student_number,
+        p.number_of_units,
+        p.amount_per_unit,
+        p.miscellaneous_fee,
+        p.total_payment,
+        p.installment_down_payment,
+        p.payment_method,
+        IFNULL(p.research_fee, '') AS research_fee,
+        IFNULL(p.transfer_fee, '') AS transfer_fee,
+        IFNULL(p.overload_fee, '') AS overload_fee,
+        p.created_at,
+        p.updated_at,
+        p.transaction_id
+    FROM payments p
+    WHERE p.student_number = :student_number
+    ORDER BY p.created_at DESC
+    LIMIT 1
     ");
-
+    
     // Bind the session student number to the SQL statement
     $paymentStmt->bindParam(':student_number', $_SESSION['student_number'], PDO::PARAM_STR);
-
+    
     // Execute the statement
     $paymentStmt->execute();
-
-    // Fetch the payment details
+    
+    // Fetch the latest payment detail
     $payments = $paymentStmt->fetchAll(PDO::FETCH_ASSOC);
-
+    
     // Debugging statement to check fetched payment details
     if (empty($payments)) {
         // echo "No payment details found for student number: " . htmlspecialchars($_SESSION['student_number']) . "\n";
@@ -615,24 +624,26 @@ $formatted_end_time = isset($subject['end_time']) ? (new DateTime($subjects['end
         $pdf->SetX(169); // Set this to your desired left margin
         $pdf->Cell(24, 0, '', 'T'); // The 'T' parameter draws a top border (underline)
 
-        
-        $pdf->SetY(116);
-        $pdf->SetX(152); 
-        $pdf->Cell(0, 10, 'Installment (DP): ' . htmlspecialchars($row['total_payment']), 0, 1);
-
-        //Installment  underline
-        $pdf->SetY(122.5);
-        $pdf->SetX(174); // Set this to your desired left margin
-        $pdf->Cell(19, 0, '', 'T'); // The 'T' parameter draws a top border (underline)
-        // Payment Summary
-        if ($row['payment_method'] === 'Installment') {
-            $pdf->Cell(0, 10, 'Installment (DP): ' . htmlspecialchars($row['total_payment']), 0, 1);
-        } else {
-            $pdf->Cell(0, 10, '', 0, 1); // Empty line for 'Cash' payment method
-        }
-        $pdf->SetY(122.5);
-        $pdf->SetX(152); // Set this to your desired left margin
-        $pdf->Cell(0, 10, 'Total: ' . htmlspecialchars($row['total_payment']), 0, 1);
+       //Installment  underline
+       $pdf->SetY(123.5);
+       $pdf->SetX(174); // Set this to your desired left margin
+       $pdf->Cell(19, 0, '', 'T'); // The 'T' parameter draws a top border (underline)
+       // Payment Summary
+       if ($row['payment_method'] === 'installment') {
+           $pdf->SetY(117);
+           $pdf->SetX(152); // Set this to your desired left margin
+           $pdf->Cell(0, 10, 'Installment (DP): ' . htmlspecialchars($row['installment_down_payment']), 0, 1);
+           $pdf->SetY(122.5);
+           $pdf->SetX(152); // Set this to your desired left margin
+           $pdf->Cell(0, 10, 'Total: ' . htmlspecialchars($row['installment_down_payment']), 0, 1);
+       } else {
+           $pdf->SetY(117);
+           $pdf->SetX(152); // Set this to your desired left margin
+           $pdf->Cell(0, 10, 'Cash Amount: ' . htmlspecialchars($row['total_payment']), 0, 1);
+           $pdf->SetY(122.5);
+           $pdf->SetX(152); // Set this to your desired left margin
+           $pdf->Cell(0, 10, 'Total: ' . htmlspecialchars($row['total_payment']), 0, 1);
+       }
     
         //Total  underline
         $pdf->SetY(129);
@@ -1156,23 +1167,28 @@ $formatted_end_time = isset($subject['end_time']) ? (new DateTime($subjects['end
         $pdf->Cell(24, 0, '', 'T'); // The 'T' parameter draws a top border (underline)
 
         
-        $pdf->SetY(265 - 15);
-        $pdf->SetX(152); 
-        $pdf->Cell(0, 10, 'Installment (DP): ' . htmlspecialchars($row['total_payment']), 0, 1);
-
-        //Installment  underline
-        $pdf->SetY(271.5 - 15);
-        $pdf->SetX(174); // Set this to your desired left margin
-        $pdf->Cell(19, 0, '', 'T'); // The 'T' parameter draws a top border (underline)
-        // Payment Summary
-        if ($row['payment_method'] === 'Installment') {
-            $pdf->Cell(0, 10, 'Installment (DP): ' . htmlspecialchars($row['total_payment']), 0, 1);
-        } else {
-            $pdf->Cell(0, 10, '', 0, 1); // Empty line for 'Cash' payment method
-        }
-        $pdf->SetY(257);
-        $pdf->SetX(152); // Set this to your desired left margin
-        $pdf->Cell(0, 10, 'Total: ' . htmlspecialchars($row['total_payment']), 0, 1);
+   //Installment  underline
+   $pdf->SetY(271.5 - 15);
+   $pdf->SetX(174); // Set this to your desired left margin
+   $pdf->Cell(19, 0, '', 'T'); // The 'T' parameter draws a top border (underline)
+   // Payment Summary
+   if ($row['payment_method'] === 'installment') {
+               //Installment  underline
+               $pdf->SetY(271.5 - 22);
+               $pdf->SetX(152); // Set this to your desired left margin
+       $pdf->Cell(0, 10, 'Installment (DP): ' . htmlspecialchars($row['installment_down_payment']), 0, 1);
+       $pdf->SetY(257);
+       $pdf->SetX(152); // Set this to your desired left margin
+       $pdf->Cell(0, 10, 'Total: ' . htmlspecialchars($row['installment_down_payment']), 0, 1);
+   } else {
+              //Installment  underline
+   $pdf->SetY(271.5 - 22);
+   $pdf->SetX(152); // Set this to your desired left margin
+   $pdf->Cell(0, 10, 'Cash Amount: ' . htmlspecialchars($row['total_payment']), 0, 1);
+   $pdf->SetY(257);
+   $pdf->SetX(152); // Set this to your desired left margin
+   $pdf->Cell(0, 10, 'Total: ' . htmlspecialchars($row['total_payment']), 0, 1);
+   }
     
         //Total  underline
         $pdf->SetY(264);

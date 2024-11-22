@@ -56,6 +56,11 @@ try {
     $schoolYearStmt->execute();
     $schoolYearName = $schoolYearStmt->fetchColumn();
 
+        // Store the semester and school year in session
+        $_SESSION['selected_semester'] = $semesterName;
+        $_SESSION['selected_school_year'] = $schoolYearName;
+    
+
     // Iterate through each selected section
     foreach ($selectedSections as $sectionId) {
         $subjectIds = $selectedSubjects[$sectionId] ?? [];
@@ -71,19 +76,19 @@ try {
                 continue;
             }
 
-            // Check for existing enrollment to prevent duplication
+        // Check for existing enrollment to prevent duplication
             $checkStmt = $db->prepare("
-                SELECT COUNT(*) FROM subject_enrollments 
-                WHERE student_number = :student_number 
-                AND section_id = :section_id 
-                AND department_id = :department_id 
-                AND course_id = :course_id 
-                AND subject_id = :subject_id
-                AND schedule_id = :schedule_id
-                AND semester = :semester
-                AND school_year = :school_year
+            SELECT COUNT(*) FROM subject_enrollments 
+            WHERE student_number = :student_number 
+            AND section_id = :section_id 
+            AND department_id = :department_id 
+            AND course_id = :course_id 
+            AND subject_id = :subject_id
+            AND schedule_id = :schedule_id
+            AND semester = :semester
+            AND school_year = :school_year
             ");
-            
+
             // Bind parameters for the check statement
             $checkStmt->bindParam(':student_number', $student_number, PDO::PARAM_STR);
             $checkStmt->bindParam(':section_id', $sectionId, PDO::PARAM_INT);
@@ -91,16 +96,32 @@ try {
             $checkStmt->bindParam(':course_id', $courseId, PDO::PARAM_INT);
             $checkStmt->bindParam(':subject_id', $subject_id, PDO::PARAM_INT);
             $checkStmt->bindParam(':schedule_id', $schedule_id, PDO::PARAM_INT);
-            $checkStmt->bindParam(':semester', $semesterName, PDO::PARAM_STR); // Send the semester name
-            $checkStmt->bindParam(':school_year', $schoolYearName, PDO::PARAM_STR); // Send the school year name
+            $checkStmt->bindParam(':semester', $semesterName, PDO::PARAM_STR);
+            $checkStmt->bindParam(':school_year', $schoolYearName, PDO::PARAM_STR);
 
             // Execute the check statement
             $checkStmt->execute();
             $exists = $checkStmt->fetchColumn() > 0;
 
             if ($exists) {
-                echo "This student is already enrolled in the specified section and subject.<br>";
-                continue; // Skip to the next subject if a duplicate is found
+            // Retrieve section name
+            $sectionQuery = $db->prepare("SELECT name FROM sections WHERE id = :sectionId");
+            $sectionQuery->bindParam(':sectionId', $sectionId, PDO::PARAM_INT);
+            $sectionQuery->execute();
+            $sectionName = $sectionQuery->fetchColumn();
+
+            // Retrieve subject name
+            $subjectQuery = $db->prepare("SELECT title FROM subjects WHERE id = :subjectId");
+            $subjectQuery->bindParam(':subjectId', $subject_id, PDO::PARAM_INT);
+            $subjectQuery->execute();
+            $subjectName = $subjectQuery->fetchColumn();
+
+            // Set error message in session with section and subject names
+            $_SESSION['error_message'] = "You are already enrolled in the section '$sectionName' semester '$semesterName' for the school year '$schoolYearName'.";
+
+            // Redirect back to the enrollment form
+            header("Location: select_courses.php");
+            exit; // Stop further processing
             }
 
             // Add data to alert array for console logging

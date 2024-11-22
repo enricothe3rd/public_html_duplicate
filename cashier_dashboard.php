@@ -1,13 +1,22 @@
+
+<?php
+
+require 'session_cashier.php';
+
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sidebar with Tab Navigation</title>
+    <title>Cashier Dashboard</title>
     <!-- Tailwind CSS CDN -->
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <!-- Font Awesome CDN -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="icon" type="image/png" href="assets/images/school-logo/bcc-icon.png">
     <style>
         html, body {
             height: 100%;
@@ -86,6 +95,12 @@
                         </a>
                     </li>
                     <li>
+                        <a href="#" class="flex items-center py-3 px-4 hover:bg-red-500" onclick="showContent('all_payments', this)">
+                            <i class="fas fa-home mr-3"></i> 
+                            <span class="hidden md:inline">View All Payments</span>
+                        </a>
+                    </li>
+                    <li>
                         <a href="#" class="flex items-center py-3 px-4 hover:bg-red-500" onclick="showContent('profile', this)">
                             <i class="fas fa-user mr-3"></i> 
                             <span class="hidden md:inline">Profile</span>
@@ -109,6 +124,15 @@
                             <span class="hidden md:inline">Research Fees</span>
                         </a>
                     </li>
+                    </li>
+                <!-- Logout -->
+                     <li>
+  <a href="javascript:void(0);" onclick="toggleModal(true)" class="flex items-center py-3 px-4 hover:bg-red-500 text-white rounded-lg transition ease-in-out duration-300">
+    <i class="fas fa-sign-out-alt mr-3"></i> 
+    <span class="hidden md:inline">Logout</span>
+  </a>
+</li>
+<?php include 'logout_modal.php'; ?>
                 </ul>
             </nav>
         </aside>
@@ -119,6 +143,9 @@
                 <i class="fas fa-bars"></i> <!-- Toggle Icon -->
             </button>
             <div id="home" class="content-section">
+                <iframe src="front_page.php" title="all_payments"></iframe>
+            </div>
+            <div id="all_payments" class="content-section">
                 <iframe src="payments/enrollment_payments_crud/view_all_payments.php" title="all_payments"></iframe>
             </div>
             <div id="profile" class="content-section">

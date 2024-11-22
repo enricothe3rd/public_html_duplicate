@@ -130,14 +130,25 @@ private function isValidCourseName($course_name) {
     return preg_match('/^[a-zA-Z0-9\s]+$/', $course_name); 
 }
 
+// // Method to retrieve all courses
+// public function getCourses() {
+//     $sql = "SELECT courses.id, courses.course_name, departments.name AS department_name
+//             FROM courses
+//             JOIN departments ON courses.department_id = departments.id";
+//     $stmt = $this->db->query($sql);
+//     return $stmt->fetchAll(PDO::FETCH_ASSOC);
+// }
+
 // Method to retrieve all courses
 public function getCourses() {
     $sql = "SELECT courses.id, courses.course_name, departments.name AS department_name
             FROM courses
-            JOIN departments ON courses.department_id = departments.id";
+            JOIN departments ON courses.department_id = departments.id
+            ORDER BY courses.course_name ASC"; // Sort by course_name
     $stmt = $this->db->query($sql);
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
+
 
 // Method to get a course by its ID
 public function getCourseById($id) {

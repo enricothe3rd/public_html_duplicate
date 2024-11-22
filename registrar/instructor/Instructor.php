@@ -10,17 +10,31 @@ class Instructor {
 
 
 
+    // public function readAll() {
+    //     $sql = 'SELECT i.id, i.first_name, i.middle_name, i.last_name, i.suffix, i.email, i.department_id, i.course_id, i.section_id,
+    //                     d.name AS department_name, c.course_name, s.name AS section_name, i.created_at, i.updated_at
+    //              FROM instructors i
+    //              LEFT JOIN departments d ON i.department_id = d.id
+    //              LEFT JOIN courses c ON i.course_id = c.id
+    //              LEFT JOIN sections s ON i.section_id = s.id';
+    //     $stmt = $this->pdo->prepare($sql);
+    //     $stmt->execute();
+    //     return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    // }
+
     public function readAll() {
         $sql = 'SELECT i.id, i.first_name, i.middle_name, i.last_name, i.suffix, i.email, i.department_id, i.course_id, i.section_id,
                         d.name AS department_name, c.course_name, s.name AS section_name, i.created_at, i.updated_at
                  FROM instructors i
                  LEFT JOIN departments d ON i.department_id = d.id
                  LEFT JOIN courses c ON i.course_id = c.id
-                 LEFT JOIN sections s ON i.section_id = s.id';
+                 LEFT JOIN sections s ON i.section_id = s.id
+                 ORDER BY i.last_name ASC'; // Alphabetize by last_name
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+    
 
 
 // Create instructor

@@ -36,6 +36,10 @@ $paymentData = [
     'installment_down_payment' => $data['installment_down_payment'],
 ];
 
+// Store total_payment and transaction_id in session
+$_SESSION['total_payment'] = $totalPayment;
+$_SESSION['transaction_id'] = $data['transaction_id'];
+$_SESSION['student_number'] = $data['student_number'];
 // Insert payment into the database
 if ($payment->create($paymentData)) {
     echo json_encode(['success' => true, 'message' => 'Payment recorded successfully.']);

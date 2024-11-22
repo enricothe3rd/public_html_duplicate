@@ -62,15 +62,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // Generate a random registration token
             $registration_token = bin2hex(random_bytes(20));
 
-            // Insert new user record
-            $sql_insert_user = "INSERT INTO users (email, password, role) VALUES (:email, :password, :role)";
+           // Insert new user record
+            $sql_insert_user = "INSERT INTO users (email, password, role, account_locked, failed_attempts) VALUES (:email, :password, :role, :account_locked, :failed_attempts)";
             $stmt_insert_user = $conn->prepare($sql_insert_user);
 
             if ($stmt_insert_user) {
                 $stmt_insert_user->bindParam(':email', $email);
                 $stmt_insert_user->bindParam(':password', $passwordHashed);
                 $stmt_insert_user->bindParam(':role', $role);
-
+           // Check if the role is 'student'
+        
+            if ($role === 'student') {
+                $stmt_insert_user->bindValue(':account_locked', 0); // Set account_locked to 0 for students
+                $stmt_insert_user->bindValue(':failed_attempts', 0); // Set failed_attempts to 0 for students
+            } else {
+                $stmt_insert_user->bindValue(':account_locked', 1); // Set account_locked to 1 for other roles
+                $stmt_insert_user->bindValue(':failed_attempts', 3); // Set failed_attempts to 3 for other roles
+            }
                 if ($stmt_insert_user->execute()) {
                     $user_id = $conn->lastInsertId();
 
@@ -98,29 +106,88 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                             $mail->isHTML(true);
                             $mail->Subject = 'Welcome! Confirm Your Email';
-                            $mail->Body = '
-                                <html>
-                                <head>
-                                    <style>
-                                        /* Your email template styling here */
-                                    </style>
-                                </head>
-                                <body>
-                                    <div class="email-container">
-                                        <div class="header">
-                                            <img src="https://bccenrollment.xyz/bcc-banner.png" alt="Header Image">
-                                        </div>
-                                        <div class="content">
-                                            <h1>Welcome to our platform!</h1>
-                                            <p>Click the following link to confirm your email and set your password:</p>
-                                            <a href="http://localhost/Enrollment-System/views/login/confirm_email1.php?token=' . $registration_token . '" class="btn">Confirm Email</a>
-                                        </div>
-                                        <div class="footer">
-                                           <p>Binangonan Catholic College<br>123 Street Address<br>City, State, ZIP<br>© ' . date('Y') . ' BCC. All rights reserved.</p>
-                                        </div>
-                                    </div>
-                                </body>
-                                </html>';
+                           $mail->Body = '
+<html>
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .email-container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .header img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        .content {
+            padding: 20px;
+            text-align: center;
+        }
+        .content h1 {
+            color: #333333;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        .content p {
+            color: #555555;
+            font-size: 16px;
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            color: #ffffff;
+            background-color: #007bff;
+            text-decoration: none;
+            font-size: 16px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+        .footer {
+            padding: 20px;
+            background-color: #333333;
+            color: #ffffff;
+            text-align: center;
+            font-size: 14px;
+        }
+        .footer p {
+            margin: 5px 0;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <div class="header">
+            <img src="https://slategray-vulture-304941.hostingersite.com/assets/images/bcc-banner.png" alt="Binangonan Catholic College">
+        </div>
+        <div class="content">
+            <h1>Welcome to our platform!</h1>
+            <p>Click the following link to confirm your email and set your password:</p>
+            <a href="https://slategray-vulture-304941.hostingersite.com/views/login/confirm_email1.php?token=' . $registration_token . '" class="btn">Confirm Email</a>
+        </div>
+        <div class="footer">
+            <p>Binangonan Catholic College<br>59 M.L. Quezon, Libis<br>Binangonan, 1940 Rizal</p>
+            <p>© ' . date('Y') . ' BCC. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>';
 
                             if (!$mail->send()) {
                                 $msg = "Error sending email: " . $mail->ErrorInfo;
@@ -165,6 +232,7 @@ unset($_SESSION['emailSent']);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register</title>
+        <link rel="icon" type="image/png" href="../../assets/images/school-logo/bcc-icon.png">
     <link href="../../assets/css/output.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
@@ -287,19 +355,19 @@ unset($_SESSION['emailSent']);
                 <label for="student">Student</label>
             </div>
             <div class="flex items-center">
-                <input type="radio" id="cashier" name="role" value="cashier" class="mr-2" <?php echo ($role == 'cashier') ? 'checked' : ''; ?>>
+                <input type="radio" id="cashier" name="role" value="cashier" class="mr-2" <?php echo ($role == 'cashier') ? 'checked' : ''; ?> disabled>
                 <label for="cashier">Cashier</label>
             </div>
             <div class="flex items-center">
-                <input type="radio" id="college_department" name="role" value="college_department" class="mr-2" <?php echo ($role == 'college_department') ? 'checked' : ''; ?>>
+                <input type="radio" id="college_department" name="role" value="college_department" class="mr-2" <?php echo ($role == 'college_department') ? 'checked' : ''; ?> disabled>
                 <label for="college_department">College Department</label>
             </div>
             <div class="flex items-center">
-                <input type="radio" id="registrar" name="role" value="registrar" class="mr-2" <?php echo ($role == 'registrar') ? 'checked' : ''; ?>>
+                <input type="radio" id="registrar" name="role" value="registrar" class="mr-2" <?php echo ($role == 'registrar') ? 'checked' : ''; ?> disabled>
                 <label for="registrar">Registrar</label>
             </div>
             <div class="flex items-center">
-                <input type="radio" id="admin" name="role" value="admin" class="mr-2" <?php echo ($role == 'admin') ? 'checked' : ''; ?>>
+                <input type="radio" id="admin" name="role" value="admin" class="mr-2" <?php echo ($role == 'admin') ? 'checked' : ''; ?> disabled>
                 <label for="admin">Admin</label>
             </div>
         </div>

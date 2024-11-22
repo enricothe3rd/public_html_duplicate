@@ -44,9 +44,23 @@ if ($existingEnrollment) {
     $status = $existingEnrollment['status'];
     $year = $existingEnrollment['year'];
 }
+// If there's an error, retain the input values from the session
+if (isset($_SESSION['form_data'])) {
+    $form_data = $_SESSION['form_data'];
+    $lastname = $form_data['lastname'] ?? $lastname;
+    $firstname = $form_data['firstname'] ?? $firstname;
+    $middlename = $form_data['middlename'] ?? $middlename;
+    $dob = $form_data['dob'] ?? $dob;
+    $address = $form_data['address'] ?? $address;
+    $contact_no = $form_data['contact_no'] ?? $contact_no;
+    $sex = $form_data['sex'] ?? $sex;
+    $suffix = $form_data['suffix'] ?? $suffix;
+    $status = $form_data['status'] ?? $status;
+    $year = $form_data['year'] ?? $year;
+}
 
-
-?><!DOCTYPE html>
+?>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -58,9 +72,9 @@ if ($existingEnrollment) {
 <body class="bg-gray-100 flex items-center justify-center min-h-screen">
     <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-3xl">
         <h2 class="text-2xl font-bold mb-6 text-center">Enrollment Form</h2>
-            <!-- Display error message if set -->
+<!-- Display error message if set -->
 <?php if (isset($_SESSION['error_message'])): ?>
-    <div class="bg-red-500 text-white p-4 rounded-md mb-4">
+    <div id="error-message" class="bg-red-500 text-white p-4 rounded-md mb-4">
         <?php 
             echo $_SESSION['error_message']; 
             unset($_SESSION['error_message']); // Clear message after displaying it
@@ -68,17 +82,48 @@ if ($existingEnrollment) {
     </div>
 <?php endif; ?>
 
+<script>
+    // Check if the error message is present
+    window.onload = function() {
+        const errorMessage = document.getElementById('error-message');
+        if (errorMessage) {
+            // Set a timeout to hide the error message after 3 seconds (3000 milliseconds)
+            setTimeout(() => {
+                errorMessage.style.display = 'none'; // Hide the message
+            }, 3000);
+        }
+    };
+</script>
+
+
 <!-- Display success message if set -->
 <?php if (isset($_SESSION['success_message'])): ?>
-    <div class="bg-green-500 text-white p-4 rounded-md mb-4">
+    <div id="success-message" class="bg-green-500 text-white p-4 rounded-md mb-4">
         <?php 
             echo $_SESSION['success_message']; 
             unset($_SESSION['success_message']); // Clear message after displaying it
         ?>
     </div>
+    
+    <script>
+        // Redirect after 3 seconds (3000 milliseconds)
+        setTimeout(function() {
+            window.location.href = '../select_courses.php';
+        }, 3000);
+
+        window.onload = function() {
+        const successMessage = document.getElementById('success-message');
+        if (successMessage) {
+            // Set a timeout to hide the success message after 3 seconds (3000 milliseconds)
+            setTimeout(() => {
+                successMessage.style.display = 'none'; // Hide the message
+            }, 3000);
+        }
+    };
+    </script>
 <?php endif; ?>
 
-<form action="send_enrollment.php" method="POST" class="grid grid-cols-1 gap-4 sm:grid-cols-1 md:grid-cols-2">
+<form action="send_enrollment.php" method="POST" class="grid grid-cols-1 gap-4 sm:grid-cols-1 md:grid-cols-2" onsubmit="return validateForm()">
        
 
             <!-- Student Number -->
@@ -93,7 +138,7 @@ if ($existingEnrollment) {
                 <label for="lastname" class="block text-sm font-medium text-red-700">Last Name</label>
                 <div class="flex items-center border border-red-300 rounded-md shadow-sm">
                     <label for="lastname" class="px-3 text-red-700 font-medium"><i class="fas fa-user"></i></label>
-                    <input type="text" name="lastname" id="lastname" value="<?= htmlspecialchars($lastname) ?>" required class="block w-full px-3 py-2 bg-red-50 text-red-800 border-none focus:outline-none focus:bg-red-100 focus:border-red-500 rounded-r-md capitalize">
+                    <input type="text" name="lastname" id="lastname" value="<?= htmlspecialchars($lastname) ?>"  class="block w-full px-3 py-2 bg-red-50 text-red-800 border-none focus:outline-none focus:bg-red-100 focus:border-red-500 rounded-r-md capitalize">
                 </div>
             </div>
 
@@ -102,9 +147,10 @@ if ($existingEnrollment) {
                 <label for="firstname" class="block text-sm font-medium text-red-700">First Name</label>
                 <div class="flex items-center border border-red-300 rounded-md shadow-sm">
                     <label for="firstname" class="px-3 text-red-700 font-medium"><i class="fas fa-user"></i></label>
-                    <input type="text" name="firstname" id="firstname" value="<?= htmlspecialchars($firstname) ?>" required class="block w-full px-3 py-2 bg-red-50 text-red-800 border-none focus:outline-none focus:bg-red-100 focus:border-red-500 rounded-r-md capitalize">
+                    <input type="text" name="firstname" id="firstname" value="<?= htmlspecialchars($firstname) ?>"  class="block w-full px-3 py-2 bg-red-50 text-red-800 border-none focus:outline-none focus:bg-red-100 focus:border-red-500 rounded-r-md capitalize">
                 </div>
             </div>
+            
 
             <!-- Middle Name -->
                        <div class="mb-4 col-span-1 relative">
@@ -115,6 +161,7 @@ if ($existingEnrollment) {
                 </div>
             </div>
 
+            
             <!-- Suffix -->
                        <div class="mb-4 col-span-1 relative">
                 <label for="suffix" class="block text-sm font-medium text-red-700">Suffix (Optional)</label>
@@ -138,7 +185,7 @@ if ($existingEnrollment) {
                 <label for="dob" class="block text-sm font-medium text-red-700">Date of Birth</label>
                 <div class="flex items-center border border-red-300 rounded-md shadow-sm">
                     <label for="dob" class="px-3 text-red-700 font-medium"><i class="fas fa-calendar-alt"></i></label>
-                    <input type="date" name="dob" id="dob" value="<?= htmlspecialchars($dob) ?>" required class="block w-full px-3 py-2 bg-red-50 text-red-800 border-none focus:outline-none focus:bg-red-100 focus:border-red-500 rounded-r-md">
+                    <input type="date" name="dob" id="dob" value="<?= htmlspecialchars($dob) ?>"  class="block w-full px-3 py-2 bg-red-50 text-red-800 border-none focus:outline-none focus:bg-red-100 focus:border-red-500 rounded-r-md">
                 </div>
             </div>
 
@@ -147,7 +194,7 @@ if ($existingEnrollment) {
                 <label for="address" class="block text-sm font-medium text-red-700">Address</label>
                 <div class="flex items-center border border-red-300 rounded-md shadow-sm">
                     <label for="address" class="px-3 text-red-700 font-medium"><i class="fas fa-map-marker-alt"></i></label>
-                    <input type="text" name="address" id="address" value="<?= htmlspecialchars($address) ?>" required class="block w-full px-3 py-2 bg-red-50 text-red-800 border-none focus:outline-none focus:bg-red-100 focus:border-red-500 rounded-r-md capitalize">
+                    <input type="text" name="address" id="address" value="<?= htmlspecialchars($address) ?>"  class="block w-full px-3 py-2 bg-red-50 text-red-800 border-none focus:outline-none focus:bg-red-100 focus:border-red-500 rounded-r-md capitalize">
                 </div>
             </div>
 
@@ -156,17 +203,17 @@ if ($existingEnrollment) {
                 <label for="contact_no" class="block text-sm font-medium text-red-700">Contact No</label>
                 <div class="flex items-center border border-red-300 rounded-md shadow-sm">
                     <label for="contact_no" class="px-3 text-red-700 font-medium"><i class="fas fa-phone"></i></label>
-                    <input type="tel" name="contact_no" id="contact_no" value="<?= htmlspecialchars($contact_no) ?>" required class="block w-full px-3 py-2 bg-red-50 text-red-800 border-none focus:outline-none focus:bg-red-100 focus:border-red-500 rounded-r-md">
+                    <input type="tel" name="contact_no" id="contact_no" value="<?= htmlspecialchars($contact_no) ?>"  class="block w-full px-3 py-2 bg-red-50 text-red-800 border-none focus:outline-none focus:bg-red-100 focus:border-red-500 rounded-r-md">
                 </div>
             </div>
 
-            <!-- Sex -->
-                       <div class="mb-4 col-span-1 relative">
+             <!-- Sex -->
+             <div class="mb-4 col-span-1 relative">
                 <label for="sex" class="block text-sm font-medium text-red-700">Sex</label>
                 <div class="flex items-center border border-red-300 rounded-md shadow-sm">
                     <label for="sex" class="px-3 text-red-700 font-medium"><i class="fas fa-venus-mars"></i></label>
-                    <select name="sex" id="sex" required class="block w-full px-3 py-2 bg-red-50 text-red-800 border-none focus:outline-none focus:bg-red-100 focus:border-red-500 rounded-r-md">
-                        <option value="" disabled>Select your sex</option>
+                    <select name="sex" id="sex"  class="block w-full px-3 py-2 bg-red-50 text-red-800 border-none focus:outline-none focus:bg-red-100 focus:border-red-500 rounded-r-md">
+                    <option value="" disabled selected>Select your Sex</option>
                         <?php foreach ($sex_options as $option): ?>
                             <option value="<?= htmlspecialchars($option['sex_name']) ?>" <?= ($option['sex_name'] === $sex) ? 'selected' : '' ?>><?= htmlspecialchars($option['sex_name']) ?></option>
                         <?php endforeach; ?>
@@ -179,7 +226,7 @@ if ($existingEnrollment) {
                 <label for="status" class="block text-sm font-medium text-red-700">Status</label>
                 <div class="flex items-center border border-red-300 rounded-md shadow-sm">
                     <label for="status" class="px-3 text-red-700 font-medium"><i class="fas fa-info-circle"></i></label>
-                    <select name="status" id="status" required class="block w-full px-3 py-2 bg-red-50 text-red-800 border-none focus:outline-none focus:bg-red-100 focus:border-red-500 rounded-r-md">
+                    <select name="status" id="status"  class="block w-full px-3 py-2 bg-red-50 text-red-800 border-none focus:outline-none focus:bg-red-100 focus:border-red-500 rounded-r-md">
                         <option value="" disabled selected>Select status</option>
                         <?php foreach ($status_options as $option): ?>
                             <option value="<?= htmlspecialchars($option['status_name']) ?>" <?= ($option['status_name'] === $status) ? 'selected' : '' ?>><?= htmlspecialchars($option['status_name']) ?></option>
@@ -188,12 +235,13 @@ if ($existingEnrollment) {
                 </div>
             </div>
 
+   
                                <div class="mb-4 col-span-1 relative">
-
             <label for="year" class="block text-sm font-medium text-red-700">Select Academic Year</label>
             <div class="flex items-center border border-red-300 rounded-md shadow-sm">   
             <label for="status" class="px-3 text-red-700 font-medium"><i class="fas fa-info-circle"></i></label>
-            <select id="year" name="year" required class="block w-full px-3 py-2 bg-red-50 text-red-800 border-none focus:outline-none focus:bg-red-100 focus:border-red-500 rounded-r-md">
+            <select id="year" name="year"  class="block w-full px-3 py-2 bg-red-50 text-red-800 border-none focus:outline-none focus:bg-red-100 focus:border-red-500 rounded-r-md">
+                    <option value="" disabled selected>Select Academic Year</option>
                     <option value="1">1st Year (Freshman)</option>
                     <option value="2">2nd Year (Sophomore)</option>
                     <option value="3">3rd Year (Junior)</option>
@@ -202,11 +250,10 @@ if ($existingEnrollment) {
                 </div>
                 </div>
 
-
             <!-- Submit Button -->
             <div class="col-span-1 sm:col-span-2">
                 <button type="submit" class="w-full bg-red-700 hover:bg-red-600 text-white font-bold py-2 px-4 rounded shadow-lg transition duration-200">
-                    Submit Enrollment
+                    Select Courses
                 </button>
             </div>
         </form>
